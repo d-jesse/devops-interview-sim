@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin Cheatsheet — DevOps Interview Sim</title>
+<script>
+  try {
+    const t = localStorage.getItem('dis_theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch {}
+</script>
+<style>
+  :root {
+    --bg: #0a0f0d;
+    --bg-grad: radial-gradient(circle at 20% -10%, #132019 0%, #0a0f0d 55%);
+    --panel: #121a16;
+    --panel-2: #19241e;
+    --border: #28362e;
+    --text: #e8ece9;
+    --text-dim: #8ea295;
+    --accent: #22c55e;
+    --accent-2: #0d9488;
+    --good: #34d399;
+    --warn: #f0b429;
+    --bad: #ef5b5b;
+    --radius: 14px;
+  }
+  :root[data-theme="light"] {
+    --bg: #f2f7f3;
+    --bg-grad: radial-gradient(circle at 20% -10%, #ffffff 0%, #eef6f0 55%);
+    --panel: #ffffff;
+    --panel-2: #eef6f0;
+    --border: #d9e6dc;
+    --text: #15231b;
+    --text-dim: #5c7267;
+    --accent: #16a34a;
+    --accent-2: #0d7a62;
+    --good: #198754;
+    --warn: #b9790a;
+    --bad: #d13c3c;
+  }
+  :root[data-theme="light"] .card {
+    box-shadow: 0 1px 3px rgba(20,25,35,0.06), 0 1px 2px rgba(20,25,35,0.04);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--bg) var(--bg-grad);
+    color: var(--text);
+  }
+  a { color: var(--accent); text-decoration: none; }
+  .shell { max-width: 880px; margin: 0 auto; padding: 36px 24px 90px; }
+  .hidden { display: none !important; }
+  .topline { font-size: 13px; color: var(--text-dim); font-weight: 600; margin-bottom: 14px; }
+  .topline a:hover { color: var(--accent); }
+  .brand { display: flex; align-items: center; gap: 10px; margin-bottom: 30px; }
+  .brand-mark {
+    width: 30px; height: 30px;
+    border-radius: 9px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    flex-shrink: 0;
+  }
+  .brand-name { font-weight: 700; font-size: 15px; }
+  .admin-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    padding: 2px 7px;
+    border-radius: 999px;
+  }
+  .theme-toggle {
+    margin-left: auto;
+    width: 36px; height: 36px;
+    border-radius: 999px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 15px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .theme-toggle:hover { border-color: var(--accent); }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px 30px;
+  }
+  .btn {
+    display: inline-flex;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 12px 22px;
+    border-radius: 10px;
+    cursor: pointer;
+    border: none;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: white;
+  }
+  .search-box {
+    width: 100%;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 14px;
+    padding: 11px 14px;
+    border-radius: 9px;
+    margin-bottom: 28px;
+  }
+  .search-box:focus { outline: none; border-color: var(--accent); }
+  .cat-group { margin-bottom: 36px; }
+  .cat-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+  .q-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin-bottom: 14px;
+  }
+  .q-prompt { font-size: 15.5px; font-weight: 600; margin: 0 0 14px; line-height: 1.45; }
+  .q-section-label {
+    font-size: 11.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-dim);
+    margin: 14px 0 6px;
+  }
+  .q-rubric { margin: 0; padding-left: 20px; font-size: 13.5px; line-height: 1.6; }
+  .q-answer {
+    font-size: 13.5px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin: 0;
+    font-family: "SF Mono", Menlo, monospace;
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="topline"><a href="/app.html">&larr; Back to app</a></div>
+  <div class="brand">
+    <div class="brand-mark"></div>
+    <div class="brand-name">Master Cheatsheet</div>
+    <span class="admin-badge">admin only</span>
+    <button class="theme-toggle" id="theme-toggle" title="Toggle light / dark">🌙</button>
+  </div>
+
+  <div id="gate" class="card">
+    <p id="gate-message">Checking admin access…</p>
+    <a class="btn hidden" id="gate-signin-btn" href="/app.html">Go sign in</a>
+  </div>
+
+  <div id="cheatsheet" class="hidden">
+    <input type="text" class="search-box" id="search-box" placeholder="Filter by question text…">
+    <div id="cat-list"></div>
+  </div>
+</div>
+
+<script>
+  function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    document.getElementById('theme-toggle').textContent = theme === 'light' ? '☀️' : '🌙';
+    try { localStorage.setItem('dis_theme', theme); } catch {}
+  }
+  document.getElementById('theme-toggle').onclick = () => {
+    const current = document.documentElement.getAttribute('data-theme') || 'dark';
+    applyTheme(current === 'light' ? 'dark' : 'light');
+  };
+  applyTheme(document.documentElement.getAttribute('data-theme') || 'dark');
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  let categories = [];
+
+  function renderCategories(filterText) {
+    const needle = (filterText || '').trim().toLowerCase();
+    const list = document.getElementById('cat-list');
+    list.innerHTML = categories.map(cat => {
+      const questions = cat.questions.filter(q => !needle || q.prompt.toLowerCase().includes(needle));
+      if (!questions.length) return '';
+      return `
+        <div class="cat-group">
+          <div class="cat-title">${escapeHtml(cat.name)}</div>
+          ${questions.map(q => `
+            <div class="q-card">
+              <p class="q-prompt">${escapeHtml(q.prompt)}</p>
+              <div class="q-section-label">Rubric</div>
+              <ul class="q-rubric">${q.rubric.map(r => `<li>${escapeHtml(r)}</li>`).join('')}</ul>
+              <div class="q-section-label">Reference answer</div>
+              <pre class="q-answer">${escapeHtml(q.model_answer)}</pre>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }).join('') || '<p style="color:var(--text-dim);">No questions match that filter.</p>';
+  }
+
+  async function init() {
+    const gate = document.getElementById('gate');
+    const gateMessage = document.getElementById('gate-message');
+    const gateSignin = document.getElementById('gate-signin-btn');
+
+    let me;
+    try {
+      me = await (await fetch('/api/auth/me')).json();
+    } catch {
+      me = { user: null };
+    }
+
+    if (!me.user) {
+      gateMessage.textContent = "You need to sign in with the admin account to view this page.";
+      gateSignin.classList.remove('hidden');
+      return;
+    }
+    if (!me.user.is_admin) {
+      gateMessage.textContent = `Signed in as ${me.user.email}, but this account isn't an admin.`;
+      return;
+    }
+
+    const res = await fetch('/api/admin/cheatsheet');
+    if (!res.ok) {
+      gateMessage.textContent = 'Could not load the cheatsheet — try refreshing.';
+      return;
+    }
+    categories = await res.json();
+    gate.classList.add('hidden');
+    document.getElementById('cheatsheet').classList.remove('hidden');
+    renderCategories('');
+
+    document.getElementById('search-box').oninput = (e) => renderCategories(e.target.value);
+  }
+
+  init();
+</script>
+</body>
+</html>

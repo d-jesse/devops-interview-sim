@@ -11,19 +11,30 @@ running locally on a Mac Studio against a hand-built answer bank and rubric
   and a rubric (specific points a strong answer should hit) per question.
   Only the question text is ever sent to the client — the reference answer
   and rubric stay server-side as the grading ground truth.
-- The frontend (`static/index.html`) is a single-page vanilla JS app: pick a
-  question, submit a free-form answer, see the graded result.
+- `static/index.html` is the marketing/landing page, `static/app.html` is the
+  interview app itself (random questions, live or deferred grading), and
+  `static/admin.html` is the admin-only master cheatsheet (full rubric +
+  reference answers). All three are vanilla JS, no build step.
 - The backend (FastAPI) builds a grading prompt from the question + rubric +
   reference answer + the candidate's answer, sends it to a model running on
   Ollama (currently `qwen3.6:35b` on a Mac Studio over the LAN), and parses
   the model's structured JSON verdict back into the UI.
+- Accounts are optional — anyone can take an interview anonymously.
+  Email/password accounts are stored in a local SQLite DB (`data/app.db`,
+  gitignored) with bcrypt-hashed passwords and a session cookie. Google
+  sign-in is wired up but stays disabled until `GOOGLE_CLIENT_ID` /
+  `GOOGLE_CLIENT_SECRET` are set in `.env` (see `.env.example`).
+- There's a single fixed admin account seeded from `ADMIN_EMAIL` /
+  `ADMIN_PASSWORD` in `.env` (defaults to `admin@devops-sim.local` /
+  `changeme123` — change these). Signing in as that account unlocks
+  `/admin.html`, which shows every question's rubric and reference answer.
 
 ## Run locally
 
 ```bash
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-cp .env.example .env   # point OLLAMA_BASE_URL at your inference host
+cp .env.example .env   # point OLLAMA_BASE_URL at your inference host, set ADMIN_PASSWORD
 uvicorn app.main:app --reload --port 8010
 ```
 

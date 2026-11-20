@@ -23,6 +23,11 @@ def public_categories() -> list[dict]:
     ]
 
 
+def full_bank() -> list[dict]:
+    """Categories with rubric + model_answer intact — admin eyes only."""
+    return load_bank()["categories"]
+
+
 def find_question(question_id: str) -> dict | None:
     bank = load_bank()
     for cat in bank["categories"]:

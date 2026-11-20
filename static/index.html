@@ -40,9 +40,7 @@
     --warn: #b9790a;
     --bad: #d13c3c;
   }
-  :root[data-theme="light"] .card,
-  :root[data-theme="light"] .grading-box,
-  :root[data-theme="light"] .feedback-card {
+  :root[data-theme="light"] .card {
     box-shadow: 0 1px 3px rgba(20,25,35,0.06), 0 1px 2px rgba(20,25,35,0.04);
   }
   * { box-sizing: border-box; }
@@ -52,19 +50,12 @@
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     background: var(--bg) var(--bg-grad);
     color: var(--text);
-    transition: background-color 0.2s ease, color 0.2s ease;
   }
-  .shell {
-    max-width: 760px;
-    margin: 0 auto;
-    padding: 48px 24px 80px;
-  }
-  .brand {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 36px;
-  }
+  a { color: var(--accent); text-decoration: none; }
+  .shell { max-width: 920px; margin: 0 auto; padding: 36px 24px 90px; }
+  .hidden { display: none !important; }
+
+  .brand { display: flex; align-items: center; gap: 10px; margin-bottom: 64px; }
   .brand-mark {
     width: 30px; height: 30px;
     border-radius: 9px;
@@ -72,8 +63,8 @@
     flex-shrink: 0;
   }
   .brand-name { font-weight: 700; font-size: 15px; letter-spacing: 0.01em; }
+  .nav-actions { margin-left: auto; display: flex; align-items: center; gap: 10px; }
   .theme-toggle {
-    margin-left: auto;
     width: 36px; height: 36px;
     border-radius: 999px;
     background: var(--panel-2);
@@ -84,263 +75,156 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: border-color 0.15s ease;
   }
   .theme-toggle:hover { border-color: var(--accent); }
-
-  /* ---------- Cards / shared ---------- */
-  .card {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 28px 30px;
+  .nav-link {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text-dim);
+    padding: 8px 14px;
+    border-radius: 9px;
+    border: 1px solid transparent;
   }
-  .hidden { display: none !important; }
+  .nav-link:hover { color: var(--text); border-color: var(--border); }
 
-  /* ---------- Start screen ---------- */
-  .hero h1 {
-    font-size: 30px;
+  /* ---------- hero ---------- */
+  .hero { text-align: center; max-width: 640px; margin: 0 auto 72px; }
+  .hero .kicker {
+    display: inline-block;
+    font-size: 12px;
     font-weight: 700;
-    margin: 0 0 10px;
-    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    background: rgba(34,197,94,0.12);
+    padding: 5px 14px;
+    border-radius: 999px;
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-size: 42px;
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin: 0 0 18px;
   }
   .hero p.tagline {
     color: var(--text-dim);
+    font-size: 16.5px;
+    line-height: 1.65;
+    margin: 0 auto 32px;
+    max-width: 540px;
+  }
+  .hero-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
     font-size: 15px;
-    line-height: 1.6;
-    margin: 0 0 32px;
-    max-width: 520px;
-  }
-  .field-label {
-    font-size: 12.5px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--text-dim);
-    margin-bottom: 10px;
-  }
-  .pill-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 28px; }
-  .pill {
-    border: 1px solid var(--border);
-    background: var(--panel-2);
-    color: var(--text);
-    border-radius: 999px;
-    padding: 9px 18px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.15s ease;
-  }
-  .pill:hover { border-color: var(--accent); }
-  .pill.active {
-    background: linear-gradient(135deg, var(--accent), var(--accent-2));
-    border-color: transparent;
-    color: white;
-  }
-  select {
-    width: 100%;
-    background: var(--panel-2);
-    border: 1px solid var(--border);
-    color: var(--text);
-    font-size: 14px;
-    padding: 11px 14px;
-    border-radius: 9px;
-    margin-bottom: 28px;
-    appearance: none;
-    cursor: pointer;
-  }
-  select:focus { outline: none; border-color: var(--accent); }
-  .start-btn {
-    width: 100%;
-    background: linear-gradient(135deg, var(--accent), var(--accent-2));
-    color: white;
-    border: none;
-    border-radius: 10px;
-    padding: 15px;
-    font-size: 15.5px;
     font-weight: 700;
+    padding: 14px 26px;
+    border-radius: 10px;
     cursor: pointer;
+    border: none;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: white;
     transition: opacity 0.15s ease;
   }
-  .start-btn:hover { opacity: 0.92; }
-
-  /* ---------- Interview screen ---------- */
-  .progress-header { margin-bottom: 22px; }
-  .progress-header-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: 8px;
-  }
-  .progress-label { font-size: 13px; color: var(--text-dim); font-weight: 600; }
-  .progress-track {
-    height: 5px;
-    background: var(--panel-2);
-    border-radius: 999px;
-    overflow: hidden;
-  }
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--accent), var(--accent-2));
-    border-radius: 999px;
-    transition: width 0.3s ease;
-  }
-  .category-tag {
-    display: inline-block;
-    font-size: 12px;
-    color: var(--accent);
-    background: rgba(34,197,94,0.14);
-    padding: 3px 10px;
-    border-radius: 999px;
-    margin-bottom: 14px;
-    font-weight: 600;
-  }
-  .question-prompt {
-    font-size: 19px;
-    font-weight: 600;
-    line-height: 1.45;
-    margin: 0 0 20px;
-  }
-  textarea {
-    width: 100%;
-    min-height: 200px;
-    background: var(--panel-2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
+  .btn-primary:hover { opacity: 0.92; }
+  .btn-secondary {
+    background: transparent;
     color: var(--text);
-    font-size: 14px;
-    font-family: "SF Mono", Menlo, monospace;
-    padding: 14px;
-    resize: vertical;
-    line-height: 1.55;
+    border: 1px solid var(--border);
   }
-  textarea:focus { outline: none; border-color: var(--accent); }
-  .actions { margin-top: 16px; display: flex; align-items: center; gap: 14px; }
-  button.primary {
+  .btn-secondary:hover { border-color: var(--accent); }
+
+  /* ---------- feature grid ---------- */
+  .section-label {
+    font-size: 12.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-dim);
+    text-align: center;
+    margin-bottom: 14px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 72px;
+  }
+  @media (max-width: 680px) { .grid { grid-template-columns: 1fr; } }
+  .feature-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 22px;
+  }
+  .feature-icon {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    background: rgba(34,197,94,0.14);
+    color: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    margin-bottom: 14px;
+  }
+  .feature-card h3 { font-size: 15.5px; margin: 0 0 8px; }
+  .feature-card p { font-size: 13.5px; line-height: 1.6; color: var(--text-dim); margin: 0; }
+
+  /* ---------- how it works ---------- */
+  .how-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 32px;
+    margin-bottom: 64px;
+  }
+  .how-card h2 { font-size: 20px; margin: 0 0 22px; text-align: center; }
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+  @media (max-width: 680px) { .steps { grid-template-columns: 1fr; } }
+  .step .step-num {
+    width: 26px; height: 26px;
+    border-radius: 50%;
     background: linear-gradient(135deg, var(--accent), var(--accent-2));
     color: white;
-    border: none;
-    border-radius: 9px;
-    padding: 11px 22px;
-    font-size: 14px;
+    font-size: 12.5px;
     font-weight: 700;
-    cursor: pointer;
-  }
-  button.primary:disabled { opacity: 0.45; cursor: default; }
-  button.secondary {
-    background: transparent;
-    color: var(--text-dim);
-    border: 1px solid var(--border);
-    border-radius: 9px;
-    padding: 11px 20px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-  }
-  button.secondary:hover { border-color: var(--accent); color: var(--text); }
-
-  /* grading progress */
-  .grading-box {
-    margin-top: 20px;
-    padding: 16px 18px;
-    background: var(--panel-2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-  }
-  .grading-label {
-    font-size: 13px;
-    color: var(--text-dim);
+    display: flex; align-items: center; justify-content: center;
     margin-bottom: 10px;
-    display: flex;
-    justify-content: space-between;
   }
-  .grading-track {
-    height: 6px;
-    background: var(--bg);
-    border-radius: 999px;
-    overflow: hidden;
-  }
-  .grading-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--accent), var(--accent-2));
-    border-radius: 999px;
-    width: 0%;
-    transition: width 0.15s linear;
-  }
+  .step h4 { font-size: 14px; margin: 0 0 6px; }
+  .step p { font-size: 13px; line-height: 1.55; color: var(--text-dim); margin: 0; }
 
-  /* feedback card */
-  .feedback-card {
-    margin-top: 22px;
+  .category-cloud { text-align: center; margin-bottom: 64px; }
+  .category-pill-row { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+  .category-pill {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-dim);
     background: var(--panel-2);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 20px 22px;
-    animation: fadein 0.25s ease;
-  }
-  @keyframes fadein { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
-  .score-row { display: flex; align-items: baseline; gap: 14px; margin-bottom: 4px; }
-  .score { font-size: 34px; font-weight: 700; }
-  .score.good { color: var(--good); }
-  .score.mid { color: var(--warn); }
-  .score.low { color: var(--bad); }
-  .verdict { font-size: 15px; color: var(--text-dim); }
-  .score-bar-track {
-    height: 6px;
-    background: var(--panel);
+    padding: 7px 14px;
     border-radius: 999px;
-    overflow: hidden;
-    margin: 10px 0 18px;
-  }
-  .score-bar-fill { height: 100%; border-radius: 999px; }
-  h3.section-label {
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--text-dim);
-    margin: 18px 0 8px;
-  }
-  ul.point-list { margin: 0; padding-left: 20px; font-size: 14px; line-height: 1.6; }
-  ul.point-list.strengths li::marker { color: var(--good); }
-  ul.point-list.gaps li::marker { color: var(--bad); }
-  .feedback-text { font-size: 14.5px; line-height: 1.6; margin-top: 4px; }
-  .error-card {
-    margin-top: 20px;
-    color: var(--bad);
-    background: rgba(239,91,91,0.1);
-    border: 1px solid rgba(239,91,91,0.3);
-    border-radius: 8px;
-    padding: 12px 16px;
-    font-size: 13.5px;
   }
 
-  /* ---------- Summary screen ---------- */
-  .summary-score {
-    font-size: 48px;
-    font-weight: 700;
-    margin: 0;
+  .cta-final { text-align: center; }
+  .cta-final h2 { font-size: 24px; margin: 0 0 12px; }
+  .cta-final p { color: var(--text-dim); font-size: 14.5px; margin: 0 0 24px; }
+
+  .footer {
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 12.5px;
+    margin-top: 80px;
   }
-  .summary-score-label { color: var(--text-dim); font-size: 14px; margin-bottom: 28px; }
-  .summary-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 14px 0;
-    border-bottom: 1px solid var(--border);
-    gap: 16px;
-  }
-  .summary-row:last-child { border-bottom: none; }
-  .summary-q { font-size: 14px; line-height: 1.4; }
-  .summary-cat { font-size: 11.5px; color: var(--text-dim); margin-bottom: 3px; }
-  .summary-score-chip {
-    flex-shrink: 0;
-    font-size: 14px;
-    font-weight: 700;
-    padding: 4px 11px;
-    border-radius: 999px;
-  }
-  .summary-score-chip.good { background: rgba(62,207,142,0.15); color: var(--good); }
-  .summary-score-chip.mid { background: rgba(240,180,41,0.15); color: var(--warn); }
-  .summary-score-chip.low { background: rgba(239,91,91,0.15); color: var(--bad); }
 </style>
 </head>
 <body>
@@ -348,461 +232,122 @@
   <div class="brand">
     <div class="brand-mark"></div>
     <div class="brand-name">DevOps Interview Sim</div>
-    <button class="theme-toggle" id="theme-toggle" title="Toggle light / dark">🌙</button>
+    <div class="nav-actions">
+      <a class="nav-link" id="nav-admin" href="/admin.html" style="display:none;">Cheatsheet</a>
+      <a class="nav-link" id="nav-auth" href="/app.html">Sign in</a>
+      <button class="theme-toggle" id="theme-toggle" title="Toggle light / dark">🌙</button>
+    </div>
   </div>
 
-  <!-- START SCREEN -->
-  <div id="screen-start" class="card hero">
-    <h1>Mock DevOps interview</h1>
-    <p class="tagline">Random questions pulled from the bank, graded by an LLM running on your own hardware — real score, real gaps, no two runs the same.</p>
-
-    <div class="field-label">How many questions?</div>
-    <div class="pill-row" id="length-pills"></div>
-
-    <div class="field-label">Grading model</div>
-    <select id="model-select"></select>
-
-    <div class="field-label">When should answers be graded?</div>
-    <div class="pill-row" id="gradingmode-pills"></div>
-
-    <button class="start-btn" id="start-btn">Start interview</button>
+  <div class="hero">
+    <span class="kicker">Runs on your own hardware</span>
+    <h1>Practice DevOps interviews against a real LLM, not a script.</h1>
+    <p class="tagline">
+      Free-form questions pulled from a hand-built bank spanning Linux, Docker, Kubernetes,
+      CI/CD, cloud infra, Terraform, monitoring, and security. Type your answer like you'd
+      say it out loud — a model running locally grades it against a rubric and reference
+      answer, and tells you exactly what you nailed and what you missed.
+    </p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="/app.html">Start a mock interview →</a>
+      <a class="btn btn-secondary" id="hero-signup" href="/app.html">Create a free account</a>
+    </div>
   </div>
 
-  <!-- INTERVIEW SCREEN -->
-  <div id="screen-interview" class="hidden">
-    <div class="progress-header">
-      <div class="progress-header-row">
-        <span class="progress-label" id="progress-label">Question 1 of 10</span>
-        <span class="progress-label" id="progress-model-label"></span>
+  <div class="section-label">What you get</div>
+  <div class="grid">
+    <div class="feature-card">
+      <div class="feature-icon">🎲</div>
+      <h3>Randomized, no cramming</h3>
+      <p>Pick how many questions you want. The set is drawn at random from the whole bank, so no two runs look the same.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🧠</div>
+      <h3>Real grading, not keyword matching</h3>
+      <p>An LLM compares your free-form answer against a rubric and a reference answer the way a senior engineer would in an actual loop.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⏱️</div>
+      <h3>Grade as you go, or at the end</h3>
+      <p>Get feedback after every question, or fire grading in the background and review your full report only once you're done.</p>
+    </div>
+  </div>
+
+  <div class="how-card">
+    <h2>How it works</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h4>Pick a length</h4>
+        <p>Choose how many questions — a quick 5-question warmup or the full bank.</p>
       </div>
-      <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
-    </div>
-    <div class="card">
-      <div class="category-tag" id="q-category"></div>
-      <p class="question-prompt" id="q-prompt"></p>
-      <textarea id="answer-box" placeholder="Type your answer as you would say it out loud in an interview..."></textarea>
-      <div class="actions">
-        <button class="primary" id="submit-btn">Submit answer</button>
-        <button class="secondary hidden" id="next-btn">Next question →</button>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h4>Answer out loud</h4>
+        <p>Type your answer the way you'd actually say it in the room — reasoning included.</p>
       </div>
-      <div class="grading-box hidden" id="grading-box">
-        <div class="grading-label">
-          <span id="grading-text">Grading on the Mac Studio…</span>
-          <span id="grading-time"></span>
-        </div>
-        <div class="grading-track"><div class="grading-fill" id="grading-fill"></div></div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h4>Get graded</h4>
+        <p>A model running on dedicated hardware scores you 1–10 with concrete strengths and gaps.</p>
       </div>
-      <div id="feedback-slot"></div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <h4>Review the report</h4>
+        <p>See your average and a per-question breakdown, then run it again with a fresh random set.</p>
+      </div>
     </div>
   </div>
 
-  <!-- SUMMARY SCREEN -->
-  <div id="screen-summary" class="hidden card">
-    <div id="summary-waiting" class="hidden">
-      <div class="field-label">Finalizing grades…</div>
-      <div class="progress-track"><div class="progress-fill" id="summary-wait-fill" style="width:0%"></div></div>
-      <p class="progress-label" id="summary-wait-label" style="margin-top:10px;"></p>
-    </div>
-    <div id="summary-content">
-      <p class="summary-score" id="summary-score"></p>
-      <p class="summary-score-label" id="summary-score-label"></p>
-      <div id="summary-list"></div>
-      <button class="start-btn" id="restart-btn" style="margin-top:24px;">Start another interview</button>
+  <div class="category-cloud">
+    <div class="section-label">Covering</div>
+    <div class="category-pill-row">
+      <span class="category-pill">Linux + Shell</span>
+      <span class="category-pill">Docker</span>
+      <span class="category-pill">Kubernetes</span>
+      <span class="category-pill">CI/CD</span>
+      <span class="category-pill">Cloud + Infrastructure</span>
+      <span class="category-pill">Terraform + IaC</span>
+      <span class="category-pill">Monitoring + Observability</span>
+      <span class="category-pill">Security + DevSecOps</span>
+      <span class="category-pill">Coding / Scenarios</span>
     </div>
   </div>
+
+  <div class="cta-final">
+    <h2>Ready to find your gaps?</h2>
+    <p>No account required to try it — sign up only if you want it to stick around.</p>
+    <a class="btn btn-primary" href="/app.html">Start a mock interview →</a>
+  </div>
+
+  <div class="footer">DevOps Interview Sim — grading happens locally, your answers never leave your own infrastructure.</div>
 </div>
 
 <script>
-const LENGTH_OPTIONS = [5, 10, 15, 21];
-const DEFAULT_ESTIMATE_MS = 15000;
-const ESTIMATE_KEY = 'dis_model_estimates_v1';
-
-let allQuestions = [];   // flattened {id, prompt, category}
-let availableModels = [];
-let defaultModel = '';
-let selectedLength = 10;
-let selectedModel = '';
-let gradingMode = 'live'; // 'live' | 'end'
-
-let queue = [];
-let currentIndex = 0;
-let results = [];
-let pendingGrades = [];
-let settledCount = 0;
-
-/* ---------- theme ---------- */
-function applyTheme(theme) {
-  document.documentElement.setAttribute('data-theme', theme);
-  document.getElementById('theme-toggle').textContent = theme === 'light' ? '☀️' : '🌙';
-  try { localStorage.setItem('dis_theme', theme); } catch {}
-}
-document.getElementById('theme-toggle').onclick = () => {
-  const current = document.documentElement.getAttribute('data-theme') || 'dark';
-  applyTheme(current === 'light' ? 'dark' : 'light');
-};
-applyTheme(document.documentElement.getAttribute('data-theme') || 'dark');
-
-const screens = {
-  start: document.getElementById('screen-start'),
-  interview: document.getElementById('screen-interview'),
-  summary: document.getElementById('screen-summary'),
-};
-
-function showScreen(name) {
-  Object.values(screens).forEach(el => el.classList.add('hidden'));
-  screens[name].classList.remove('hidden');
-}
-
-function escapeHtml(str) {
-  const div = document.createElement('div');
-  div.textContent = str;
-  return div.innerHTML;
-}
-
-function shuffle(arr) {
-  const a = arr.slice();
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
+  function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    document.getElementById('theme-toggle').textContent = theme === 'light' ? '☀️' : '🌙';
+    try { localStorage.setItem('dis_theme', theme); } catch {}
   }
-  return a;
-}
+  document.getElementById('theme-toggle').onclick = () => {
+    const current = document.documentElement.getAttribute('data-theme') || 'dark';
+    applyTheme(current === 'light' ? 'dark' : 'light');
+  };
+  applyTheme(document.documentElement.getAttribute('data-theme') || 'dark');
 
-/* ---------- estimates (localStorage, per model moving average) ---------- */
-function getEstimates() {
-  try { return JSON.parse(localStorage.getItem(ESTIMATE_KEY)) || {}; }
-  catch { return {}; }
-}
-function getEstimateMs(model) {
-  const est = getEstimates();
-  return est[model] || DEFAULT_ESTIMATE_MS;
-}
-function updateEstimateMs(model, actualMs) {
-  const est = getEstimates();
-  est[model] = est[model] ? Math.round(est[model] * 0.7 + actualMs * 0.3) : actualMs;
-  try { localStorage.setItem(ESTIMATE_KEY, JSON.stringify(est)); } catch {}
-}
-
-/* ---------- init ---------- */
-async function init() {
-  const [catRes, modelRes] = await Promise.all([
-    fetch('/api/categories'),
-    fetch('/api/models'),
-  ]);
-  const categories = await catRes.json();
-  const modelData = await modelRes.json();
-
-  allQuestions = [];
-  for (const cat of categories) {
-    for (const q of cat.questions) {
-      allQuestions.push({ id: q.id, prompt: q.prompt, category: cat.name });
-    }
-  }
-
-  defaultModel = modelData.default;
-  availableModels = modelData.available.length ? modelData.available : [defaultModel];
-  selectedModel = defaultModel;
-
-  renderLengthPills();
-  renderModelSelect();
-  renderGradingModePills();
-}
-
-function renderGradingModePills() {
-  const row = document.getElementById('gradingmode-pills');
-  row.innerHTML = '';
-  const options = [
-    { value: 'live', label: 'Grade as you go' },
-    { value: 'end', label: 'Grade at the end' },
-  ];
-  for (const opt of options) {
-    const pill = document.createElement('div');
-    pill.className = 'pill' + (opt.value === gradingMode ? ' active' : '');
-    pill.textContent = opt.label;
-    pill.onclick = () => {
-      gradingMode = opt.value;
-      row.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
-      pill.classList.add('active');
-    };
-    row.appendChild(pill);
-  }
-}
-
-function renderLengthPills() {
-  const row = document.getElementById('length-pills');
-  row.innerHTML = '';
-  const options = LENGTH_OPTIONS.filter(n => n <= allQuestions.length);
-  if (options[options.length - 1] !== allQuestions.length) options.push(allQuestions.length);
-  selectedLength = options.includes(10) ? 10 : options[0];
-
-  for (const n of options) {
-    const pill = document.createElement('div');
-    pill.className = 'pill' + (n === selectedLength ? ' active' : '');
-    pill.textContent = n === allQuestions.length ? `All (${n})` : n;
-    pill.onclick = () => {
-      selectedLength = n;
-      row.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
-      pill.classList.add('active');
-    };
-    row.appendChild(pill);
-  }
-}
-
-function renderModelSelect() {
-  const sel = document.getElementById('model-select');
-  sel.innerHTML = '';
-  for (const m of availableModels) {
-    const opt = document.createElement('option');
-    opt.value = m;
-    opt.textContent = m === defaultModel ? `${m} (default)` : m;
-    sel.appendChild(opt);
-  }
-  sel.value = defaultModel;
-  sel.onchange = () => { selectedModel = sel.value; };
-}
-
-/* ---------- interview flow ---------- */
-document.getElementById('start-btn').onclick = () => {
-  queue = shuffle(allQuestions).slice(0, selectedLength);
-  currentIndex = 0;
-  results = new Array(queue.length).fill(null);
-  pendingGrades = [];
-  settledCount = 0;
-  showScreen('interview');
-  renderQuestion();
-};
-
-function renderQuestion() {
-  const q = queue[currentIndex];
-  document.getElementById('progress-label').textContent = `Question ${currentIndex + 1} of ${queue.length}`;
-  document.getElementById('progress-model-label').textContent = selectedModel;
-  document.getElementById('progress-fill').style.width = `${(currentIndex / queue.length) * 100}%`;
-  document.getElementById('q-category').textContent = q.category;
-  document.getElementById('q-prompt').textContent = q.prompt;
-  document.getElementById('answer-box').value = '';
-  document.getElementById('answer-box').disabled = false;
-  document.getElementById('feedback-slot').innerHTML = '';
-  document.getElementById('grading-box').classList.add('hidden');
-  document.getElementById('submit-btn').classList.remove('hidden');
-  document.getElementById('submit-btn').disabled = false;
-  document.getElementById('next-btn').classList.add('hidden');
-  document.getElementById('next-btn').textContent = currentIndex === queue.length - 1 ? 'See results →' : 'Next question →';
-  document.getElementById('answer-box').focus();
-}
-
-let gradingTimer = null;
-
-function startGradingAnimation(estimateMs) {
-  const fill = document.getElementById('grading-fill');
-  const timeLabel = document.getElementById('grading-time');
-  const startTime = Date.now();
-  fill.style.width = '0%';
-
-  gradingTimer = setInterval(() => {
-    const elapsed = Date.now() - startTime;
-    let pct;
-    if (elapsed < estimateMs) {
-      pct = (elapsed / estimateMs) * 90;
-    } else {
-      // asymptotically creep from 90% to 99% once we're past the estimate
-      const overshoot = elapsed - estimateMs;
-      pct = 90 + 9 * (1 - Math.exp(-overshoot / 8000));
-    }
-    fill.style.width = `${pct}%`;
-
-    const remaining = Math.max(0, Math.round((estimateMs - elapsed) / 1000));
-    timeLabel.textContent = elapsed < estimateMs ? `~${remaining}s remaining` : 'finishing up…';
-  }, 100);
-}
-
-function stopGradingAnimation() {
-  if (gradingTimer) clearInterval(gradingTimer);
-  gradingTimer = null;
-  document.getElementById('grading-fill').style.width = '100%';
-}
-
-function gradeRequest(q, answer) {
-  const callStart = Date.now();
-  return fetch('/api/grade', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ question_id: q.id, answer, model: selectedModel }),
-  }).then(async res => {
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({ detail: res.statusText }));
-      throw new Error(err.detail || 'Grading failed');
-    }
-    const result = await res.json();
-    updateEstimateMs(selectedModel, result.meta?.duration_ms ?? (Date.now() - callStart));
-    return result;
-  });
-}
-
-async function submitLive(idx, q, answer) {
-  const feedbackSlot = document.getElementById('feedback-slot');
-  const submitBtn = document.getElementById('submit-btn');
-  const answerBox = document.getElementById('answer-box');
-  const gradingBox = document.getElementById('grading-box');
-  gradingBox.classList.remove('hidden');
-  const estimateMs = getEstimateMs(selectedModel);
-  startGradingAnimation(estimateMs);
-
-  try {
-    const result = await gradeRequest(q, answer);
-    stopGradingAnimation();
-    results[idx] = { category: q.category, prompt: q.prompt, score: result.score, verdict: result.verdict };
-    renderFeedback(feedbackSlot, result);
-    submitBtn.classList.add('hidden');
-    document.getElementById('next-btn').classList.remove('hidden');
-    setTimeout(() => { gradingBox.classList.add('hidden'); }, 600);
-  } catch (e) {
-    stopGradingAnimation();
-    gradingBox.classList.add('hidden');
-    feedbackSlot.innerHTML = `<div class="error-card">${escapeHtml(e.message)}</div>`;
-    submitBtn.disabled = false;
-    answerBox.disabled = false;
-  }
-}
-
-function submitDeferred(idx, q, answer) {
-  const feedbackSlot = document.getElementById('feedback-slot');
-  results[idx] = { category: q.category, prompt: q.prompt, score: null, verdict: null };
-
-  const promise = gradeRequest(q, answer)
-    .then(result => {
-      results[idx] = { category: q.category, prompt: q.prompt, score: result.score, verdict: result.verdict };
-    })
-    .catch(e => {
-      results[idx] = { category: q.category, prompt: q.prompt, score: null, verdict: 'Grading failed', error: e.message };
-    })
-    .finally(() => { settledCount++; });
-  pendingGrades.push(promise);
-
-  feedbackSlot.innerHTML = `<div class="feedback-card" style="opacity:0.7;"><div class="verdict">Answer saved — grading in the background. Results will show at the end.</div></div>`;
-  document.getElementById('submit-btn').classList.add('hidden');
-  document.getElementById('next-btn').classList.remove('hidden');
-}
-
-document.getElementById('submit-btn').onclick = async () => {
-  const idx = currentIndex;
-  const q = queue[idx];
-  const answerBox = document.getElementById('answer-box');
-  const answer = answerBox.value;
-  const feedbackSlot = document.getElementById('feedback-slot');
-  const submitBtn = document.getElementById('submit-btn');
-
-  if (!answer.trim()) {
-    answerBox.focus();
-    return;
-  }
-
-  submitBtn.disabled = true;
-  answerBox.disabled = true;
-  feedbackSlot.innerHTML = '';
-
-  if (gradingMode === 'end') {
-    submitDeferred(idx, q, answer);
-  } else {
-    await submitLive(idx, q, answer);
-  }
-};
-
-document.getElementById('next-btn').onclick = () => {
-  currentIndex++;
-  if (currentIndex >= queue.length) {
-    goToSummary();
-  } else {
-    renderQuestion();
-  }
-};
-
-async function goToSummary() {
-  if (pendingGrades.length) {
-    showScreen('summary');
-    document.getElementById('summary-waiting').classList.remove('hidden');
-    document.getElementById('summary-content').classList.add('hidden');
-    const total = pendingGrades.length;
-    const waitFill = document.getElementById('summary-wait-fill');
-    const waitLabel = document.getElementById('summary-wait-label');
-    const poll = setInterval(() => {
-      const pct = total ? (settledCount / total) * 100 : 100;
-      waitFill.style.width = `${pct}%`;
-      waitLabel.textContent = `Graded ${settledCount} of ${total}`;
-    }, 200);
-    await Promise.allSettled(pendingGrades);
-    clearInterval(poll);
-    waitFill.style.width = '100%';
-    waitLabel.textContent = `Graded ${total} of ${total}`;
-    document.getElementById('summary-waiting').classList.add('hidden');
-    document.getElementById('summary-content').classList.remove('hidden');
-  }
-  renderSummary();
-  showScreen('summary');
-}
-
-function renderFeedback(slot, result) {
-  const score = result.score ?? 0;
-  const scoreClass = score >= 8 ? 'good' : score >= 5 ? 'mid' : 'low';
-  const barColor = score >= 8 ? 'var(--good)' : score >= 5 ? 'var(--warn)' : 'var(--bad)';
-  const strengths = (result.strengths || []).map(s => `<li>${escapeHtml(s)}</li>`).join('');
-  const gaps = (result.gaps || []).map(g => `<li>${escapeHtml(g)}</li>`).join('');
-
-  slot.innerHTML = `
-    <div class="feedback-card">
-      <div class="score-row">
-        <span class="score ${scoreClass}">${score}/10</span>
-        <span class="verdict">${escapeHtml(result.verdict || '')}</span>
-      </div>
-      <div class="score-bar-track">
-        <div class="score-bar-fill" style="width:${score * 10}%; background:${barColor};"></div>
-      </div>
-      ${strengths ? `<h3 class="section-label">What you got right</h3><ul class="point-list strengths">${strengths}</ul>` : ''}
-      ${gaps ? `<h3 class="section-label">What was missing</h3><ul class="point-list gaps">${gaps}</ul>` : ''}
-      <h3 class="section-label">Feedback</h3>
-      <p class="feedback-text">${escapeHtml(result.feedback || '')}</p>
-    </div>
-  `;
-}
-
-function renderSummary() {
-  const scored = results.filter(r => r && typeof r.score === 'number');
-  const avg = scored.length ? scored.reduce((sum, r) => sum + r.score, 0) / scored.length : 0;
-  const scoreClass = avg >= 8 ? 'good' : avg >= 5 ? 'mid' : 'low';
-  document.getElementById('summary-score').textContent = scored.length ? avg.toFixed(1) : '—';
-  document.getElementById('summary-score').style.color = `var(--${scoreClass})`;
-  document.getElementById('summary-score-label').textContent = `Average score across ${scored.length} question${scored.length === 1 ? '' : 's'}`;
-
-  const list = document.getElementById('summary-list');
-  list.innerHTML = results.filter(Boolean).map(r => {
-    if (typeof r.score !== 'number') {
-      return `
-        <div class="summary-row">
-          <div class="summary-q">
-            <div class="summary-cat">${escapeHtml(r.category)}</div>
-            ${escapeHtml(r.prompt)}
-          </div>
-          <div class="summary-score-chip low">Error</div>
-        </div>
-      `;
-    }
-    const cls = r.score >= 8 ? 'good' : r.score >= 5 ? 'mid' : 'low';
-    return `
-      <div class="summary-row">
-        <div class="summary-q">
-          <div class="summary-cat">${escapeHtml(r.category)}</div>
-          ${escapeHtml(r.prompt)}
-        </div>
-        <div class="summary-score-chip ${cls}">${r.score}/10</div>
-      </div>
-    `;
-  }).join('');
-}
-
-document.getElementById('restart-btn').onclick = () => {
-  showScreen('start');
-};
-
-init();
+  (async () => {
+    try {
+      const res = await fetch('/api/auth/me');
+      const data = await res.json();
+      if (data.user) {
+        document.getElementById('nav-auth').textContent = data.user.name;
+        document.getElementById('hero-signup').classList.add('hidden');
+        if (data.user.is_admin) {
+          document.getElementById('nav-admin').style.display = '';
+        }
+      }
+    } catch {}
+  })();
 </script>
 </body>
 </html>
