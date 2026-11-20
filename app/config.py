@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     session_cookie_name: str = "dis_session"
     session_ttl_days: int = 30
 
-    admin_email: str = "admin@devops-sim.local"
+    admin_email: str = "admin@admin"
     admin_password: str = "changeme123"
 
     google_client_id: str = ""

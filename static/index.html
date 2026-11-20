@@ -215,6 +215,29 @@
     border-radius: 999px;
   }
 
+  /* ---------- tool logos ---------- */
+  .tool-logos { text-align: center; margin-bottom: 64px; }
+  .tool-row { display: flex; gap: 18px; flex-wrap: wrap; justify-content: center; }
+  .tool-chip { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 70px; }
+  .tool-icon-badge {
+    width: 54px; height: 54px;
+    border-radius: 14px;
+    background: #ffffff;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+  }
+  .tool-icon-badge img { width: 100%; height: 100%; object-fit: contain; }
+  .tool-chip span {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-dim);
+    text-align: center;
+    line-height: 1.3;
+  }
+
   .cta-final { text-align: center; }
   .cta-final h2 { font-size: 24px; margin: 0 0 12px; }
   .cta-final p { color: var(--text-dim); font-size: 14.5px; margin: 0 0 24px; }
@@ -296,6 +319,29 @@
         <h4>Review the report</h4>
         <p>See your average and a per-question breakdown, then run it again with a fresh random set.</p>
       </div>
+    </div>
+  </div>
+
+  <div class="tool-logos">
+    <div class="section-label">Tools you'll be asked about</div>
+    <div class="tool-row">
+      <div class="tool-chip"><div class="tool-icon-badge"><img src="https://cdn.jsdelivr.net/npm/simple-icons@11/icons/linux.svg" alt="Linux" loading="lazy"></div><span>Linux</span></div>
+      <div class="tool-chip"><div class="tool-icon-badge"><img src="https://cdn.jsdelivr.net/npm/simple-icons@11/icons/gnubash.svg" alt="Bash" loading="lazy"></div><span>Bash</span></div>
+      <div class="tool-chip"><div class="tool-icon-badge"><img src="https://cdn.jsdelivr.net/npm/simple-icons@11/icons/docker.svg" alt="Docker" loading="lazy"></div><span>Docker</span></div>
+      <div class="tool-chip"><div class="tool-icon-badge"><img src="https://cdn.jsdelivr.net/npm/simple-icons@11/icons/kubernetes.svg" alt="Kubernetes" loading="lazy"></div><span>Kubernetes</span></div>
+      <div class="tool-chip"><div class="tool-icon-badge"><img src="https://cdn.jsdelivr.net/npm/simple-icons@11/icons/helm.svg" alt="Helm" loading="lazy"></div><span>Helm</span></div>
+      <div class="tool-chip"><div class="tool-icon-badge"><img src="https://cdn.jsdelivr.net/npm/simple-icons@11/icons/githubactions.svg" alt="GitHub Actions" loading="lazy"></div><span>GitHub Actions</span></div>
+      <div class="tool-chip"><div class="tool-icon-badge"><img src="https://cdn.jsdelivr.net/npm/simple-icons@11/icons/jenkins.svg" alt="Jenkins" loading="lazy"></div><span>Jenkins</span></div>
+      <div class="tool-chip"><div class="tool-icon-badge"><img src="https://cdn.jsdelivr.net/npm/simple-icons@11/icons/gitlab.svg" alt="GitLab" loading="lazy"></div><span>GitLab</span></div>
+      <div class="tool-chip"><div class="tool-icon-badge"><img src="https://cdn.jsdelivr.net/npm/simple-icons@11/icons/amazonaws.svg" alt="AWS" loading="lazy"></div><span>AWS</span></div>
+      <div class="tool-chip"><div class="tool-icon-badge"><img src="https://cdn.jsdelivr.net/npm/simple-icons@11/icons/googlecloud.svg" alt="Google Cloud" loading="lazy"></div><span>Google Cloud</span></div>
+      <div class="tool-chip"><div class="tool-icon-badge"><img src="https://cdn.jsdelivr.net/npm/simple-icons@11/icons/microsoftazure.svg" alt="Azure" loading="lazy"></div><span>Azure</span></div>
+      <div class="tool-chip"><div class="tool-icon-badge"><img src="https://cdn.jsdelivr.net/npm/simple-icons@11/icons/terraform.svg" alt="Terraform" loading="lazy"></div><span>Terraform</span></div>
+      <div class="tool-chip"><div class="tool-icon-badge"><img src="https://cdn.jsdelivr.net/npm/simple-icons@11/icons/ansible.svg" alt="Ansible" loading="lazy"></div><span>Ansible</span></div>
+      <div class="tool-chip"><div class="tool-icon-badge"><img src="https://cdn.jsdelivr.net/npm/simple-icons@11/icons/prometheus.svg" alt="Prometheus" loading="lazy"></div><span>Prometheus</span></div>
+      <div class="tool-chip"><div class="tool-icon-badge"><img src="https://cdn.jsdelivr.net/npm/simple-icons@11/icons/grafana.svg" alt="Grafana" loading="lazy"></div><span>Grafana</span></div>
+      <div class="tool-chip"><div class="tool-icon-badge"><img src="https://cdn.jsdelivr.net/npm/simple-icons@11/icons/vault.svg" alt="Vault" loading="lazy"></div><span>Vault</span></div>
+      <div class="tool-chip"><div class="tool-icon-badge"><img src="https://cdn.jsdelivr.net/npm/simple-icons@11/icons/owasp.svg" alt="OWASP" loading="lazy"></div><span>OWASP</span></div>
     </div>
   </div>
 
