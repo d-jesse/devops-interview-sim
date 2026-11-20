@@ -19,6 +19,18 @@ CREATE TABLE IF NOT EXISTS sessions (
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
     expires_at TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS attempts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    length INTEGER NOT NULL,
+    model TEXT NOT NULL,
+    grading_mode TEXT NOT NULL,
+    avg_score REAL,
+    questions_json TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_attempts_user ON attempts(user_id, created_at DESC);
 """
 
 

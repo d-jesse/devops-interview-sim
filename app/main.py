@@ -7,12 +7,14 @@ from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
+from app.attempts import list_attempts, save_attempt
 from app.auth import (
     create_session,
     current_user,
     destroy_session,
     hash_password,
     require_admin,
+    require_user,
     verify_password,
 )
 from app.config import settings
@@ -29,6 +31,7 @@ GOOGLE_AUTHORIZE_URL = "https://accounts.google.com/o/oauth2/v2/auth"
 GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token"
 GOOGLE_USERINFO_URL = "https://openidconnect.googleapis.com/v1/userinfo"
 OAUTH_STATE_COOKIE = "dis_oauth_state"
+OAUTH_NEXT_COOKIE = "dis_oauth_next"
 
 
 @app.on_event("startup")
@@ -161,8 +164,14 @@ async def logout(request: Request) -> Response:
     return out
 
 
+def _safe_next_path(next_path: str | None) -> str:
+    if next_path and next_path.startswith("/") and not next_path.startswith("//"):
+        return next_path
+    return "/app.html"
+
+
 @app.get("/api/auth/google/login")
-async def google_login() -> RedirectResponse:
+async def google_login(next: str | None = None) -> RedirectResponse:
     if not (settings.google_client_id and settings.google_client_secret):
         raise HTTPException(status_code=501, detail="Google sign-in is not configured on this server")
 
@@ -178,6 +187,7 @@ async def google_login() -> RedirectResponse:
     url = f"{GOOGLE_AUTHORIZE_URL}?{httpx.QueryParams(params)}"
     out = RedirectResponse(url)
     out.set_cookie(OAUTH_STATE_COOKIE, state, httponly=True, samesite="lax", max_age=600, path="/")
+    out.set_cookie(OAUTH_NEXT_COOKIE, _safe_next_path(next), httponly=True, samesite="lax", max_age=600, path="/")
     return out
 
 
@@ -220,10 +230,48 @@ async def google_callback(request: Request, code: str | None = None, state: str 
         user = create_user(email or f"{google_sub}@google", name, google_sub=google_sub)
 
     token = create_session(user["id"])
-    out = RedirectResponse("/app.html")
+    next_path = _safe_next_path(request.cookies.get(OAUTH_NEXT_COOKIE))
+    out = RedirectResponse(next_path)
     _set_session_cookie(out, token)
     out.delete_cookie(OAUTH_STATE_COOKIE, path="/")
+    out.delete_cookie(OAUTH_NEXT_COOKIE, path="/")
     return out
+
+
+# ---------- history ----------
+
+
+class AttemptQuestion(BaseModel):
+    category: str
+    prompt: str
+    score: int | None = None
+    verdict: str | None = None
+
+
+class SaveAttemptRequest(BaseModel):
+    length: int
+    model: str
+    grading_mode: str
+    avg_score: float | None = None
+    questions: list[AttemptQuestion]
+
+
+@app.post("/api/attempts")
+async def create_attempt(req: SaveAttemptRequest, user: dict = Depends(require_user)) -> dict:
+    attempt_id = save_attempt(
+        user["id"],
+        req.length,
+        req.model,
+        req.grading_mode,
+        req.avg_score,
+        [q.model_dump() for q in req.questions],
+    )
+    return {"id": attempt_id}
+
+
+@app.get("/api/attempts")
+async def get_attempts(user: dict = Depends(require_user)) -> list[dict]:
+    return list_attempts(user["id"])
 
 
 # ---------- admin ----------

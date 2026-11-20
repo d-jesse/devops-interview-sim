@@ -500,6 +500,7 @@
     <div id="summary-content">
       <p class="summary-score" id="summary-score"></p>
       <p class="summary-score-label" id="summary-score-label"></p>
+      <p class="progress-label" id="summary-save-note" style="margin:0 0 20px;"></p>
       <div id="summary-list"></div>
       <button class="start-btn" id="restart-btn" style="margin-top:24px;">Start another interview</button>
     </div>
@@ -527,33 +528,6 @@
   </div>
 </div>
 
-<!-- AUTH MODAL (sign in / create account) -->
-<div class="modal-overlay hidden" id="auth-modal">
-  <div class="modal-card card">
-    <div class="modal-header">
-      <h2 id="auth-modal-title">Sign in</h2>
-      <button class="modal-close" id="auth-modal-close" type="button">&times;</button>
-    </div>
-    <div id="auth-error" class="error-card hidden"></div>
-
-    <div id="auth-name-field" class="hidden">
-      <div class="field-label">Name</div>
-      <input type="text" id="auth-name" class="text-input" placeholder="Your name">
-    </div>
-    <div class="field-label">Email</div>
-    <input type="email" id="auth-email" class="text-input" placeholder="you@example.com">
-    <div class="field-label">Password</div>
-    <input type="password" id="auth-password" class="text-input" placeholder="••••••••">
-
-    <button class="start-btn" id="auth-submit-btn" type="button">Sign in</button>
-    <button class="secondary hidden" id="auth-google-btn" type="button" style="width:100%; margin-top:10px;">Continue with Google</button>
-
-    <p class="auth-switch" id="auth-switch">
-      Don't have an account? <a href="#" id="auth-switch-link">Create one</a>
-    </p>
-  </div>
-</div>
-
 <script>
 const LENGTH_OPTIONS = [5, 10, 15, 21];
 const DEFAULT_ESTIMATE_MS = 15000;
@@ -573,8 +547,6 @@ let pendingGrades = [];
 let settledCount = 0;
 
 let currentUser = null;
-let googleEnabled = false;
-let authMode = 'login'; // 'login' | 'register'
 
 /* ---------- theme ---------- */
 function applyTheme(theme) {
@@ -616,20 +588,9 @@ function shuffle(arr) {
 
 /* ---------- auth ---------- */
 async function initAuth() {
-  const [meRes, cfgRes] = await Promise.all([
-    fetch('/api/auth/me'),
-    fetch('/api/auth/config'),
-  ]);
-  const me = await meRes.json();
-  const cfg = await cfgRes.json();
+  const me = await (await fetch('/api/auth/me')).json();
   currentUser = me.user;
-  googleEnabled = !!cfg.google_enabled;
   renderAuthBar();
-
-  const requestedAuth = new URLSearchParams(window.location.search).get('auth');
-  if (!currentUser && (requestedAuth === 'login' || requestedAuth === 'register')) {
-    openAuthModal(requestedAuth);
-  }
 }
 
 function renderAuthBar() {
@@ -637,66 +598,18 @@ function renderAuthBar() {
   if (currentUser) {
     bar.innerHTML = `
       <span class="user-chip">${escapeHtml(currentUser.name)}${currentUser.is_admin ? '<span class="admin-badge">admin</span>' : ''}</span>
+      <a class="secondary auth-link" href="/history.html" style="padding:7px 14px; border:1px solid var(--border); border-radius:9px;">History</a>
       ${currentUser.is_admin ? '<a class="secondary auth-link" href="/admin.html" style="padding:7px 14px; border:1px solid var(--border); border-radius:9px;">Cheatsheet</a>' : ''}
       <button class="secondary auth-link" id="logout-btn" type="button">Log out</button>
     `;
     document.getElementById('logout-btn').onclick = doLogout;
   } else {
     bar.innerHTML = `
-      <button class="secondary auth-link" id="signin-btn" type="button">Sign in</button>
-      <button class="secondary auth-link" id="signup-btn" type="button">Create account</button>
+      <a class="secondary auth-link" href="/signin.html?next=/app.html" style="padding:7px 14px; border:1px solid var(--border); border-radius:9px;">Sign in</a>
+      <a class="secondary auth-link" href="/signin.html?mode=register&next=/app.html" style="padding:7px 14px; border:1px solid var(--border); border-radius:9px;">Create account</a>
     `;
-    document.getElementById('signin-btn').onclick = () => openAuthModal('login');
-    document.getElementById('signup-btn').onclick = () => openAuthModal('register');
   }
 }
-
-function openAuthModal(mode) {
-  authMode = mode;
-  document.getElementById('auth-modal-title').textContent = mode === 'login' ? 'Sign in' : 'Create account';
-  document.getElementById('auth-submit-btn').textContent = mode === 'login' ? 'Sign in' : 'Create account';
-  document.getElementById('auth-name-field').classList.toggle('hidden', mode === 'login');
-  document.getElementById('auth-switch').innerHTML = mode === 'login'
-    ? `Don't have an account? <a href="#" id="auth-switch-link">Create one</a>`
-    : `Already have an account? <a href="#" id="auth-switch-link">Sign in</a>`;
-  document.getElementById('auth-switch-link').onclick = (e) => {
-    e.preventDefault();
-    openAuthModal(mode === 'login' ? 'register' : 'login');
-  };
-  document.getElementById('auth-error').classList.add('hidden');
-  document.getElementById('auth-google-btn').classList.toggle('hidden', !googleEnabled);
-  document.getElementById('auth-modal').classList.remove('hidden');
-}
-
-document.getElementById('auth-modal-close').onclick = () => document.getElementById('auth-modal').classList.add('hidden');
-document.getElementById('auth-google-btn').onclick = () => { window.location.href = '/api/auth/google/login'; };
-
-document.getElementById('auth-submit-btn').onclick = async () => {
-  const email = document.getElementById('auth-email').value.trim();
-  const password = document.getElementById('auth-password').value;
-  const name = document.getElementById('auth-name').value.trim();
-  const errBox = document.getElementById('auth-error');
-  errBox.classList.add('hidden');
-
-  const path = authMode === 'login' ? '/api/auth/login' : '/api/auth/register';
-  const body = authMode === 'login' ? { email, password } : { email, password, name };
-
-  try {
-    const res = await fetch(path, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    });
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(data.detail || 'Something went wrong');
-    currentUser = data.user;
-    document.getElementById('auth-modal').classList.add('hidden');
-    renderAuthBar();
-  } catch (e) {
-    errBox.textContent = e.message;
-    errBox.classList.remove('hidden');
-  }
-};
 
 async function doLogout() {
   await fetch('/api/auth/logout', { method: 'POST' });
@@ -1022,6 +935,36 @@ function renderFeedback(slot, result) {
   `;
 }
 
+async function saveAttemptIfSignedIn(avg, scoredCount) {
+  const note = document.getElementById('summary-save-note');
+  if (!currentUser) {
+    note.innerHTML = `<a href="/signin.html?next=/app.html">Sign in</a> to save this result to your history.`;
+    return;
+  }
+  note.textContent = 'Saving to your history…';
+  try {
+    const res = await fetch('/api/attempts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        length: queue.length,
+        model: selectedModel,
+        grading_mode: gradingMode,
+        avg_score: scoredCount ? avg : null,
+        questions: results.filter(Boolean).map(r => ({
+          category: r.category,
+          prompt: r.prompt,
+          score: typeof r.score === 'number' ? r.score : null,
+          verdict: r.verdict || null,
+        })),
+      }),
+    });
+    note.textContent = res.ok ? 'Saved to your history.' : "Couldn't save this result — try again later.";
+  } catch {
+    note.textContent = "Couldn't save this result — try again later.";
+  }
+}
+
 function renderSummary() {
   const scored = results.filter(r => r && typeof r.score === 'number');
   const avg = scored.length ? scored.reduce((sum, r) => sum + r.score, 0) / scored.length : 0;
@@ -1029,6 +972,7 @@ function renderSummary() {
   document.getElementById('summary-score').textContent = scored.length ? avg.toFixed(1) : '—';
   document.getElementById('summary-score').style.color = `var(--${scoreClass})`;
   document.getElementById('summary-score-label').textContent = `Average score across ${scored.length} question${scored.length === 1 ? '' : 's'}`;
+  saveAttemptIfSignedIn(avg, scored.length);
 
   const list = document.getElementById('summary-list');
   list.innerHTML = results.filter(Boolean).map(r => {
