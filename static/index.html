@@ -6,128 +6,237 @@
 <title>DevOps Interview Sim</title>
 <style>
   :root {
-    --bg: #0f1216;
-    --panel: #171b21;
-    --panel-2: #1e232b;
-    --border: #2a3039;
-    --text: #e6e8eb;
-    --text-dim: #9aa4b2;
+    --bg: #0b0d11;
+    --bg-grad: radial-gradient(circle at 20% -10%, #15202e 0%, #0b0d11 55%);
+    --panel: #151920;
+    --panel-2: #1c2129;
+    --border: #272e38;
+    --text: #e9ebee;
+    --text-dim: #8d96a3;
     --accent: #5b8def;
+    --accent-2: #8f6ff7;
     --good: #3ecf8e;
     --warn: #f0b429;
     --bad: #ef5b5b;
+    --radius: 14px;
   }
   * { box-sizing: border-box; }
   body {
     margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    background: var(--bg);
-    color: var(--text);
-  }
-  .layout {
-    display: grid;
-    grid-template-columns: 300px 1fr;
     min-height: 100vh;
-  }
-  @media (max-width: 760px) {
-    .layout { grid-template-columns: 1fr; }
-    .sidebar { max-height: 240px; }
-  }
-  .sidebar {
-    background: var(--panel);
-    border-right: 1px solid var(--border);
-    overflow-y: auto;
-    padding: 16px 0;
-  }
-  .sidebar h1 {
-    font-size: 15px;
-    padding: 0 16px 12px;
-    margin: 0;
-    color: var(--text-dim);
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    text-transform: uppercase;
-  }
-  .category { margin-bottom: 4px; }
-  .category-name {
-    padding: 8px 16px;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-dim);
-  }
-  .question-item {
-    padding: 8px 16px 8px 24px;
-    font-size: 13.5px;
-    cursor: pointer;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--bg) var(--bg-grad);
     color: var(--text);
-    border-left: 2px solid transparent;
-    line-height: 1.4;
   }
-  .question-item:hover { background: var(--panel-2); }
-  .question-item.active {
-    border-left-color: var(--accent);
-    background: var(--panel-2);
-    color: var(--accent);
+  .shell {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
   }
-  .main {
-    padding: 32px 40px;
-    max-width: 820px;
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 36px;
   }
-  .empty-state {
+  .brand-mark {
+    width: 30px; height: 30px;
+    border-radius: 9px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    flex-shrink: 0;
+  }
+  .brand-name { font-weight: 700; font-size: 15px; letter-spacing: 0.01em; }
+
+  /* ---------- Cards / shared ---------- */
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px 30px;
+  }
+  .hidden { display: none !important; }
+
+  /* ---------- Start screen ---------- */
+  .hero h1 {
+    font-size: 30px;
+    font-weight: 700;
+    margin: 0 0 10px;
+    letter-spacing: -0.01em;
+  }
+  .hero p.tagline {
     color: var(--text-dim);
     font-size: 15px;
-    margin-top: 80px;
-    text-align: center;
+    line-height: 1.6;
+    margin: 0 0 32px;
+    max-width: 520px;
+  }
+  .field-label {
+    font-size: 12.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+  }
+  .pill-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 28px; }
+  .pill {
+    border: 1px solid var(--border);
+    background: var(--panel-2);
+    color: var(--text);
+    border-radius: 999px;
+    padding: 9px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .pill:hover { border-color: var(--accent); }
+  .pill.active {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    border-color: transparent;
+    color: white;
+  }
+  select {
+    width: 100%;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 14px;
+    padding: 11px 14px;
+    border-radius: 9px;
+    margin-bottom: 28px;
+    appearance: none;
+    cursor: pointer;
+  }
+  select:focus { outline: none; border-color: var(--accent); }
+  .start-btn {
+    width: 100%;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 15px;
+    font-size: 15.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+  }
+  .start-btn:hover { opacity: 0.92; }
+
+  /* ---------- Interview screen ---------- */
+  .progress-header { margin-bottom: 22px; }
+  .progress-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+  }
+  .progress-label { font-size: 13px; color: var(--text-dim); font-weight: 600; }
+  .progress-track {
+    height: 5px;
+    background: var(--panel-2);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    border-radius: 999px;
+    transition: width 0.3s ease;
   }
   .category-tag {
     display: inline-block;
     font-size: 12px;
     color: var(--accent);
     background: rgba(91,141,239,0.12);
-    padding: 3px 9px;
+    padding: 3px 10px;
     border-radius: 999px;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
+    font-weight: 600;
   }
   .question-prompt {
-    font-size: 20px;
+    font-size: 19px;
     font-weight: 600;
-    line-height: 1.4;
+    line-height: 1.45;
     margin: 0 0 20px;
   }
   textarea {
     width: 100%;
-    min-height: 220px;
-    background: var(--panel);
+    min-height: 200px;
+    background: var(--panel-2);
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: 10px;
     color: var(--text);
     font-size: 14px;
     font-family: "SF Mono", Menlo, monospace;
     padding: 14px;
     resize: vertical;
-    line-height: 1.5;
+    line-height: 1.55;
   }
   textarea:focus { outline: none; border-color: var(--accent); }
-  .actions { margin-top: 14px; display: flex; align-items: center; gap: 12px; }
-  button {
-    background: var(--accent);
+  .actions { margin-top: 16px; display: flex; align-items: center; gap: 14px; }
+  button.primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
     color: white;
     border: none;
-    border-radius: 7px;
-    padding: 10px 20px;
+    border-radius: 9px;
+    padding: 11px 22px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  button.primary:disabled { opacity: 0.45; cursor: default; }
+  button.secondary {
+    background: transparent;
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 11px 20px;
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
   }
-  button:disabled { opacity: 0.5; cursor: default; }
-  .status { color: var(--text-dim); font-size: 13.5px; }
+  button.secondary:hover { border-color: var(--accent); color: var(--text); }
+
+  /* grading progress */
+  .grading-box {
+    margin-top: 20px;
+    padding: 16px 18px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+  .grading-label {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .grading-track {
+    height: 6px;
+    background: var(--bg);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .grading-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    border-radius: 999px;
+    width: 0%;
+    transition: width 0.15s linear;
+  }
+
+  /* feedback card */
   .feedback-card {
-    margin-top: 28px;
-    background: var(--panel);
+    margin-top: 22px;
+    background: var(--panel-2);
     border: 1px solid var(--border);
     border-radius: 10px;
     padding: 20px 22px;
+    animation: fadein 0.25s ease;
   }
+  @keyframes fadein { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
   .score-row { display: flex; align-items: baseline; gap: 14px; margin-bottom: 4px; }
   .score { font-size: 34px; font-weight: 700; }
   .score.good { color: var(--good); }
@@ -136,7 +245,7 @@
   .verdict { font-size: 15px; color: var(--text-dim); }
   .score-bar-track {
     height: 6px;
-    background: var(--panel-2);
+    background: var(--panel);
     border-radius: 999px;
     overflow: hidden;
     margin: 10px 0 18px;
@@ -162,110 +271,324 @@
     padding: 12px 16px;
     font-size: 13.5px;
   }
+
+  /* ---------- Summary screen ---------- */
+  .summary-score {
+    font-size: 48px;
+    font-weight: 700;
+    margin: 0;
+  }
+  .summary-score-label { color: var(--text-dim); font-size: 14px; margin-bottom: 28px; }
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    gap: 16px;
+  }
+  .summary-row:last-child { border-bottom: none; }
+  .summary-q { font-size: 14px; line-height: 1.4; }
+  .summary-cat { font-size: 11.5px; color: var(--text-dim); margin-bottom: 3px; }
+  .summary-score-chip {
+    flex-shrink: 0;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 4px 11px;
+    border-radius: 999px;
+  }
+  .summary-score-chip.good { background: rgba(62,207,142,0.15); color: var(--good); }
+  .summary-score-chip.mid { background: rgba(240,180,41,0.15); color: var(--warn); }
+  .summary-score-chip.low { background: rgba(239,91,91,0.15); color: var(--bad); }
 </style>
 </head>
 <body>
-<div class="layout">
-  <div class="sidebar">
-    <h1>DevOps Interview Sim</h1>
-    <div id="category-list"></div>
+<div class="shell">
+  <div class="brand">
+    <div class="brand-mark"></div>
+    <div class="brand-name">DevOps Interview Sim</div>
   </div>
-  <div class="main" id="main">
-    <div class="empty-state">Pick a question from the left to begin.</div>
+
+  <!-- START SCREEN -->
+  <div id="screen-start" class="card hero">
+    <h1>Mock DevOps interview</h1>
+    <p class="tagline">Random questions pulled from the bank, graded live by an LLM running on your own hardware — real score, real gaps, no two runs the same.</p>
+
+    <div class="field-label">How many questions?</div>
+    <div class="pill-row" id="length-pills"></div>
+
+    <div class="field-label">Grading model</div>
+    <select id="model-select"></select>
+
+    <button class="start-btn" id="start-btn">Start interview</button>
+  </div>
+
+  <!-- INTERVIEW SCREEN -->
+  <div id="screen-interview" class="hidden">
+    <div class="progress-header">
+      <div class="progress-header-row">
+        <span class="progress-label" id="progress-label">Question 1 of 10</span>
+        <span class="progress-label" id="progress-model-label"></span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    </div>
+    <div class="card">
+      <div class="category-tag" id="q-category"></div>
+      <p class="question-prompt" id="q-prompt"></p>
+      <textarea id="answer-box" placeholder="Type your answer as you would say it out loud in an interview..."></textarea>
+      <div class="actions">
+        <button class="primary" id="submit-btn">Submit answer</button>
+        <button class="secondary hidden" id="next-btn">Next question →</button>
+      </div>
+      <div class="grading-box hidden" id="grading-box">
+        <div class="grading-label">
+          <span id="grading-text">Grading on the Mac Studio…</span>
+          <span id="grading-time"></span>
+        </div>
+        <div class="grading-track"><div class="grading-fill" id="grading-fill"></div></div>
+      </div>
+      <div id="feedback-slot"></div>
+    </div>
+  </div>
+
+  <!-- SUMMARY SCREEN -->
+  <div id="screen-summary" class="hidden card">
+    <p class="summary-score" id="summary-score"></p>
+    <p class="summary-score-label" id="summary-score-label"></p>
+    <div id="summary-list"></div>
+    <button class="start-btn" id="restart-btn" style="margin-top:24px;">Start another interview</button>
   </div>
 </div>
 
 <script>
-const categoryListEl = document.getElementById('category-list');
-const mainEl = document.getElementById('main');
-let categories = [];
-let activeQuestionId = null;
+const LENGTH_OPTIONS = [5, 10, 15, 21];
+const DEFAULT_ESTIMATE_MS = 15000;
+const ESTIMATE_KEY = 'dis_model_estimates_v1';
 
-async function loadCategories() {
-  const res = await fetch('/api/categories');
-  categories = await res.json();
-  renderSidebar();
+let allQuestions = [];   // flattened {id, prompt, category}
+let availableModels = [];
+let defaultModel = '';
+let selectedLength = 10;
+let selectedModel = '';
+
+let queue = [];
+let currentIndex = 0;
+let results = [];
+
+const screens = {
+  start: document.getElementById('screen-start'),
+  interview: document.getElementById('screen-interview'),
+  summary: document.getElementById('screen-summary'),
+};
+
+function showScreen(name) {
+  Object.values(screens).forEach(el => el.classList.add('hidden'));
+  screens[name].classList.remove('hidden');
 }
 
-function renderSidebar() {
-  categoryListEl.innerHTML = '';
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/* ---------- estimates (localStorage, per model moving average) ---------- */
+function getEstimates() {
+  try { return JSON.parse(localStorage.getItem(ESTIMATE_KEY)) || {}; }
+  catch { return {}; }
+}
+function getEstimateMs(model) {
+  const est = getEstimates();
+  return est[model] || DEFAULT_ESTIMATE_MS;
+}
+function updateEstimateMs(model, actualMs) {
+  const est = getEstimates();
+  est[model] = est[model] ? Math.round(est[model] * 0.7 + actualMs * 0.3) : actualMs;
+  try { localStorage.setItem(ESTIMATE_KEY, JSON.stringify(est)); } catch {}
+}
+
+/* ---------- init ---------- */
+async function init() {
+  const [catRes, modelRes] = await Promise.all([
+    fetch('/api/categories'),
+    fetch('/api/models'),
+  ]);
+  const categories = await catRes.json();
+  const modelData = await modelRes.json();
+
+  allQuestions = [];
   for (const cat of categories) {
-    const catDiv = document.createElement('div');
-    catDiv.className = 'category';
-    const nameDiv = document.createElement('div');
-    nameDiv.className = 'category-name';
-    nameDiv.textContent = cat.name;
-    catDiv.appendChild(nameDiv);
     for (const q of cat.questions) {
-      const item = document.createElement('div');
-      item.className = 'question-item';
-      item.dataset.id = q.id;
-      item.textContent = q.prompt;
-      item.onclick = () => selectQuestion(cat, q);
-      catDiv.appendChild(item);
+      allQuestions.push({ id: q.id, prompt: q.prompt, category: cat.name });
     }
-    categoryListEl.appendChild(catDiv);
+  }
+
+  defaultModel = modelData.default;
+  availableModels = modelData.available.length ? modelData.available : [defaultModel];
+  selectedModel = defaultModel;
+
+  renderLengthPills();
+  renderModelSelect();
+}
+
+function renderLengthPills() {
+  const row = document.getElementById('length-pills');
+  row.innerHTML = '';
+  const options = LENGTH_OPTIONS.filter(n => n <= allQuestions.length);
+  if (options[options.length - 1] !== allQuestions.length) options.push(allQuestions.length);
+  selectedLength = options.includes(10) ? 10 : options[0];
+
+  for (const n of options) {
+    const pill = document.createElement('div');
+    pill.className = 'pill' + (n === selectedLength ? ' active' : '');
+    pill.textContent = n === allQuestions.length ? `All (${n})` : n;
+    pill.onclick = () => {
+      selectedLength = n;
+      row.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+    };
+    row.appendChild(pill);
   }
 }
 
-function markActive(id) {
-  document.querySelectorAll('.question-item').forEach(el => {
-    el.classList.toggle('active', el.dataset.id === id);
-  });
+function renderModelSelect() {
+  const sel = document.getElementById('model-select');
+  sel.innerHTML = '';
+  for (const m of availableModels) {
+    const opt = document.createElement('option');
+    opt.value = m;
+    opt.textContent = m === defaultModel ? `${m} (default)` : m;
+    sel.appendChild(opt);
+  }
+  sel.value = defaultModel;
+  sel.onchange = () => { selectedModel = sel.value; };
 }
 
-function selectQuestion(cat, q) {
-  activeQuestionId = q.id;
-  markActive(q.id);
-  mainEl.innerHTML = `
-    <div class="category-tag">${cat.name}</div>
-    <p class="question-prompt">${escapeHtml(q.prompt)}</p>
-    <textarea id="answer-box" placeholder="Type your answer as you would say it out loud in an interview..."></textarea>
-    <div class="actions">
-      <button id="submit-btn">Submit answer</button>
-      <span class="status" id="status-text"></span>
-    </div>
-    <div id="feedback-slot"></div>
-  `;
-  document.getElementById('submit-btn').onclick = submitAnswer;
+/* ---------- interview flow ---------- */
+document.getElementById('start-btn').onclick = () => {
+  queue = shuffle(allQuestions).slice(0, selectedLength);
+  currentIndex = 0;
+  results = [];
+  showScreen('interview');
+  renderQuestion();
+};
+
+function renderQuestion() {
+  const q = queue[currentIndex];
+  document.getElementById('progress-label').textContent = `Question ${currentIndex + 1} of ${queue.length}`;
+  document.getElementById('progress-model-label').textContent = selectedModel;
+  document.getElementById('progress-fill').style.width = `${(currentIndex / queue.length) * 100}%`;
+  document.getElementById('q-category').textContent = q.category;
+  document.getElementById('q-prompt').textContent = q.prompt;
+  document.getElementById('answer-box').value = '';
+  document.getElementById('answer-box').disabled = false;
+  document.getElementById('feedback-slot').innerHTML = '';
+  document.getElementById('grading-box').classList.add('hidden');
+  document.getElementById('submit-btn').classList.remove('hidden');
+  document.getElementById('submit-btn').disabled = false;
+  document.getElementById('next-btn').classList.add('hidden');
   document.getElementById('answer-box').focus();
 }
 
-async function submitAnswer() {
-  const btn = document.getElementById('submit-btn');
-  const statusText = document.getElementById('status-text');
+let gradingTimer = null;
+
+function startGradingAnimation(estimateMs) {
+  const fill = document.getElementById('grading-fill');
+  const timeLabel = document.getElementById('grading-time');
+  const startTime = Date.now();
+  fill.style.width = '0%';
+
+  gradingTimer = setInterval(() => {
+    const elapsed = Date.now() - startTime;
+    let pct;
+    if (elapsed < estimateMs) {
+      pct = (elapsed / estimateMs) * 90;
+    } else {
+      // asymptotically creep from 90% to 99% once we're past the estimate
+      const overshoot = elapsed - estimateMs;
+      pct = 90 + 9 * (1 - Math.exp(-overshoot / 8000));
+    }
+    fill.style.width = `${pct}%`;
+
+    const remaining = Math.max(0, Math.round((estimateMs - elapsed) / 1000));
+    timeLabel.textContent = elapsed < estimateMs ? `~${remaining}s remaining` : 'finishing up…';
+  }, 100);
+}
+
+function stopGradingAnimation() {
+  if (gradingTimer) clearInterval(gradingTimer);
+  gradingTimer = null;
+  document.getElementById('grading-fill').style.width = '100%';
+}
+
+document.getElementById('submit-btn').onclick = async () => {
+  const q = queue[currentIndex];
+  const answerBox = document.getElementById('answer-box');
+  const answer = answerBox.value;
   const feedbackSlot = document.getElementById('feedback-slot');
-  const answer = document.getElementById('answer-box').value;
+  const submitBtn = document.getElementById('submit-btn');
 
   if (!answer.trim()) {
-    statusText.textContent = 'Write an answer first.';
+    answerBox.focus();
     return;
   }
 
-  btn.disabled = true;
-  statusText.textContent = 'Grading on the Mac Studio... (can take up to a minute on larger models)';
+  submitBtn.disabled = true;
+  answerBox.disabled = true;
   feedbackSlot.innerHTML = '';
+  const gradingBox = document.getElementById('grading-box');
+  gradingBox.classList.remove('hidden');
+  const estimateMs = getEstimateMs(selectedModel);
+  startGradingAnimation(estimateMs);
 
+  const callStart = Date.now();
   try {
     const res = await fetch('/api/grade', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ question_id: activeQuestionId, answer }),
+      body: JSON.stringify({ question_id: q.id, answer, model: selectedModel }),
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({ detail: res.statusText }));
       throw new Error(err.detail || 'Grading failed');
     }
     const result = await res.json();
+    stopGradingAnimation();
+    updateEstimateMs(selectedModel, result.meta?.duration_ms ?? (Date.now() - callStart));
+
+    results.push({ category: q.category, prompt: q.prompt, score: result.score, verdict: result.verdict });
     renderFeedback(feedbackSlot, result);
-    statusText.textContent = '';
+
+    submitBtn.classList.add('hidden');
+    document.getElementById('next-btn').classList.remove('hidden');
+    setTimeout(() => { gradingBox.classList.add('hidden'); }, 600);
   } catch (e) {
+    stopGradingAnimation();
+    gradingBox.classList.add('hidden');
     feedbackSlot.innerHTML = `<div class="error-card">${escapeHtml(e.message)}</div>`;
-    statusText.textContent = '';
-  } finally {
-    btn.disabled = false;
+    submitBtn.disabled = false;
+    answerBox.disabled = false;
   }
-}
+};
+
+document.getElementById('next-btn').onclick = () => {
+  currentIndex++;
+  if (currentIndex >= queue.length) {
+    renderSummary();
+    showScreen('summary');
+  } else {
+    renderQuestion();
+  }
+};
 
 function renderFeedback(slot, result) {
   const score = result.score ?? 0;
@@ -291,13 +614,33 @@ function renderFeedback(slot, result) {
   `;
 }
 
-function escapeHtml(str) {
-  const div = document.createElement('div');
-  div.textContent = str;
-  return div.innerHTML;
+function renderSummary() {
+  const avg = results.reduce((sum, r) => sum + r.score, 0) / results.length;
+  const scoreClass = avg >= 8 ? 'good' : avg >= 5 ? 'mid' : 'low';
+  document.getElementById('summary-score').textContent = avg.toFixed(1);
+  document.getElementById('summary-score').style.color = `var(--${scoreClass})`;
+  document.getElementById('summary-score-label').textContent = `Average score across ${results.length} question${results.length > 1 ? 's' : ''}`;
+
+  const list = document.getElementById('summary-list');
+  list.innerHTML = results.map(r => {
+    const cls = r.score >= 8 ? 'good' : r.score >= 5 ? 'mid' : 'low';
+    return `
+      <div class="summary-row">
+        <div class="summary-q">
+          <div class="summary-cat">${escapeHtml(r.category)}</div>
+          ${escapeHtml(r.prompt)}
+        </div>
+        <div class="summary-score-chip ${cls}">${r.score}/10</div>
+      </div>
+    `;
+  }).join('');
 }
 
-loadCategories();
+document.getElementById('restart-btn').onclick = () => {
+  showScreen('start');
+};
+
+init();
 </script>
 </body>
 </html>

@@ -4,7 +4,8 @@ from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from app.grading import grade_answer
+from app.config import settings
+from app.grading import grade_answer, list_models
 from app.question_bank import find_question, public_categories
 
 app = FastAPI(title="devops-interview-sim")
@@ -22,9 +23,19 @@ async def categories() -> list[dict]:
     return public_categories()
 
 
+@app.get("/api/models")
+async def models() -> dict:
+    try:
+        available = await list_models()
+    except Exception:
+        available = []
+    return {"default": settings.grading_model, "available": available}
+
+
 class GradeRequest(BaseModel):
     question_id: str
     answer: str
+    model: str | None = None
 
 
 @app.post("/api/grade")
@@ -36,7 +47,7 @@ async def grade(req: GradeRequest) -> dict:
         raise HTTPException(status_code=400, detail="Answer is empty")
 
     try:
-        result = await grade_answer(question, req.answer)
+        result = await grade_answer(question, req.answer, model=req.model)
     except Exception as exc:
         raise HTTPException(status_code=502, detail=f"Grading failed: {exc}") from exc
 
