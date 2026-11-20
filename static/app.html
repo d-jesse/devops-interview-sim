@@ -625,6 +625,11 @@ async function initAuth() {
   currentUser = me.user;
   googleEnabled = !!cfg.google_enabled;
   renderAuthBar();
+
+  const requestedAuth = new URLSearchParams(window.location.search).get('auth');
+  if (!currentUser && (requestedAuth === 'login' || requestedAuth === 'register')) {
+    openAuthModal(requestedAuth);
+  }
 }
 
 function renderAuthBar() {
