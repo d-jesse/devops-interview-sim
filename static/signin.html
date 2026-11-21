@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sign in — DevOps Interview Sim</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <script>
   try {
     const t = localStorage.getItem('dis_theme');
@@ -62,11 +63,7 @@
   .topline a { font-size: 13px; color: var(--text-dim); font-weight: 600; }
   .topline a:hover { color: var(--accent); }
   .brand { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 28px; }
-  .brand-mark {
-    width: 28px; height: 28px;
-    border-radius: 8px;
-    background: linear-gradient(135deg, var(--accent), var(--accent-2));
-  }
+  .brand-mark { width: 28px; height: 28px; display: block; }
   .brand-name { font-weight: 700; font-size: 15px; }
   .card {
     background: var(--panel);
@@ -139,7 +136,7 @@
 <div class="wrap">
   <div class="topline"><a href="/index.html">&larr; Back to home</a></div>
   <div class="brand">
-    <div class="brand-mark"></div>
+    <img class="brand-mark" src="/favicon.svg" alt="">
     <div class="brand-name">DevOps Interview Sim</div>
   </div>
   <div class="card">

@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Admin Cheatsheet — DevOps Interview Sim</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <script>
   try {
     const t = localStorage.getItem('dis_theme');
@@ -57,12 +58,7 @@
   .topline { font-size: 13px; color: var(--text-dim); font-weight: 600; margin-bottom: 14px; }
   .topline a:hover { color: var(--accent); }
   .brand { display: flex; align-items: center; gap: 10px; margin-bottom: 30px; }
-  .brand-mark {
-    width: 30px; height: 30px;
-    border-radius: 9px;
-    background: linear-gradient(135deg, var(--accent), var(--accent-2));
-    flex-shrink: 0;
-  }
+  .brand-mark { width: 30px; height: 30px; flex-shrink: 0; display: block; }
   .brand-name { font-weight: 700; font-size: 15px; }
   .admin-badge {
     display: inline-block;
@@ -158,7 +154,7 @@
 <div class="shell">
   <div class="topline"><a href="/app.html">&larr; Back to app</a></div>
   <div class="brand">
-    <div class="brand-mark"></div>
+    <img class="brand-mark" src="/favicon.svg" alt="">
     <div class="brand-name">Master Cheatsheet</div>
     <span class="admin-badge">admin only</span>
     <button class="theme-toggle" id="theme-toggle" title="Toggle light / dark">🌙</button>

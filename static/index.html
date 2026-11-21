@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>DevOps Interview Sim</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <script>
   try {
     const t = localStorage.getItem('dis_theme');
@@ -56,12 +57,7 @@
   .hidden { display: none !important; }
 
   .brand { display: flex; align-items: center; gap: 10px; margin-bottom: 64px; }
-  .brand-mark {
-    width: 30px; height: 30px;
-    border-radius: 9px;
-    background: linear-gradient(135deg, var(--accent), var(--accent-2));
-    flex-shrink: 0;
-  }
+  .brand-mark { width: 30px; height: 30px; flex-shrink: 0; display: block; }
   .brand-name { font-weight: 700; font-size: 15px; letter-spacing: 0.01em; }
   .nav-actions { margin-left: auto; display: flex; align-items: center; gap: 10px; }
   .theme-toggle {
@@ -253,7 +249,7 @@
 <body>
 <div class="shell">
   <div class="brand">
-    <div class="brand-mark"></div>
+    <img class="brand-mark" src="/favicon.svg" alt="">
     <div class="brand-name">DevOps Interview Sim</div>
     <div class="nav-actions">
       <a class="nav-link" id="nav-admin" href="/admin.html" style="display:none;">Cheatsheet</a>
