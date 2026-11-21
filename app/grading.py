@@ -57,18 +57,9 @@ def _parse_grading_response(raw: str) -> dict:
     return parsed
 
 
-async def list_models() -> list[str]:
-    async with httpx.AsyncClient(base_url=settings.ollama_base_url, timeout=10) as client:
-        resp = await client.get("/v1/models")
-        resp.raise_for_status()
-        data = resp.json()
-    return [m["id"] for m in data.get("data", [])]
-
-
-async def grade_answer(question: dict, candidate_answer: str, model: str | None = None) -> dict:
-    chosen_model = model or settings.grading_model
+async def grade_answer(question: dict, candidate_answer: str) -> dict:
     payload = {
-        "model": chosen_model,
+        "model": settings.grading_model,
         "messages": [
             {"role": "system", "content": GRADING_SYSTEM_PROMPT},
             {"role": "user", "content": _build_user_prompt(question, candidate_answer)},
@@ -86,5 +77,5 @@ async def grade_answer(question: dict, candidate_answer: str, model: str | None 
 
     raw = data["choices"][0]["message"]["content"]
     parsed = _parse_grading_response(raw)
-    parsed["meta"] = {"model": chosen_model, "duration_ms": duration_ms}
+    parsed["meta"] = {"model": settings.grading_model, "duration_ms": duration_ms}
     return parsed

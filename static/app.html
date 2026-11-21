@@ -172,22 +172,6 @@
     border-color: transparent;
     color: white;
   }
-  select, .text-input {
-    width: 100%;
-    background: var(--panel-2);
-    border: 1px solid var(--border);
-    color: var(--text);
-    font-size: 14px;
-    padding: 11px 14px;
-    border-radius: 9px;
-    margin-bottom: 18px;
-    appearance: none;
-    cursor: pointer;
-    font-family: inherit;
-  }
-  select { margin-bottom: 28px; }
-  .text-input { cursor: text; }
-  select:focus, .text-input:focus { outline: none; border-color: var(--accent); }
   .start-btn {
     width: 100%;
     background: linear-gradient(135deg, var(--accent), var(--accent-2));
@@ -449,9 +433,6 @@
     <div class="field-label">How many questions?</div>
     <div class="pill-row" id="length-pills"></div>
 
-    <div class="field-label">Grading model</div>
-    <select id="model-select"></select>
-
     <div class="field-label">When should answers be graded?</div>
     <div class="pill-row" id="gradingmode-pills"></div>
 
@@ -463,7 +444,6 @@
     <div class="progress-header">
       <div class="progress-header-row">
         <span class="progress-label" id="progress-label">Question 1 of 10</span>
-        <span class="progress-label" id="progress-model-label"></span>
       </div>
       <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
     </div>
@@ -530,11 +510,9 @@ const DEFAULT_ESTIMATE_MS = 15000;
 const ESTIMATE_KEY = 'dis_model_estimates_v1';
 
 let allQuestions = [];   // flattened {id, prompt, category}
-let availableModels = [];
-let defaultModel = '';
 let selectedLength = 10;
-let selectedModel = '';
 let gradingMode = 'live'; // 'live' | 'end'
+let gradingModelUsed = null; // learned from the server's grading response, never chosen by the user
 
 let queue = [];
 let currentIndex = 0;
@@ -613,29 +591,20 @@ async function doLogout() {
   renderAuthBar();
 }
 
-/* ---------- estimates (localStorage, per model moving average) ---------- */
-function getEstimates() {
-  try { return JSON.parse(localStorage.getItem(ESTIMATE_KEY)) || {}; }
-  catch { return {}; }
+/* ---------- estimates (localStorage moving average of grading latency) ---------- */
+function getEstimateMs() {
+  try { return Number(localStorage.getItem(ESTIMATE_KEY)) || DEFAULT_ESTIMATE_MS; }
+  catch { return DEFAULT_ESTIMATE_MS; }
 }
-function getEstimateMs(model) {
-  const est = getEstimates();
-  return est[model] || DEFAULT_ESTIMATE_MS;
-}
-function updateEstimateMs(model, actualMs) {
-  const est = getEstimates();
-  est[model] = est[model] ? Math.round(est[model] * 0.7 + actualMs * 0.3) : actualMs;
-  try { localStorage.setItem(ESTIMATE_KEY, JSON.stringify(est)); } catch {}
+function updateEstimateMs(actualMs) {
+  const prev = getEstimateMs();
+  const next = Math.round(prev * 0.7 + actualMs * 0.3);
+  try { localStorage.setItem(ESTIMATE_KEY, String(next)); } catch {}
 }
 
 /* ---------- init ---------- */
 async function init() {
-  const [catRes, modelRes] = await Promise.all([
-    fetch('/api/categories'),
-    fetch('/api/models'),
-  ]);
-  const categories = await catRes.json();
-  const modelData = await modelRes.json();
+  const categories = await (await fetch('/api/categories')).json();
 
   allQuestions = [];
   for (const cat of categories) {
@@ -644,12 +613,7 @@ async function init() {
     }
   }
 
-  defaultModel = modelData.default;
-  availableModels = modelData.available.length ? modelData.available : [defaultModel];
-  selectedModel = defaultModel;
-
   renderLengthPills();
-  renderModelSelect();
   renderGradingModePills();
 }
 
@@ -693,19 +657,6 @@ function renderLengthPills() {
   }
 }
 
-function renderModelSelect() {
-  const sel = document.getElementById('model-select');
-  sel.innerHTML = '';
-  for (const m of availableModels) {
-    const opt = document.createElement('option');
-    opt.value = m;
-    opt.textContent = m === defaultModel ? `${m} (default)` : m;
-    sel.appendChild(opt);
-  }
-  sel.value = defaultModel;
-  sel.onchange = () => { selectedModel = sel.value; };
-}
-
 /* ---------- interview flow ---------- */
 function beginInterview() {
   queue = shuffle(allQuestions).slice(0, selectedLength);
@@ -742,7 +693,6 @@ document.getElementById('tooltip-start-btn').onclick = () => {
 function renderQuestion() {
   const q = queue[currentIndex];
   document.getElementById('progress-label').textContent = `Question ${currentIndex + 1} of ${queue.length}`;
-  document.getElementById('progress-model-label').textContent = selectedModel;
   document.getElementById('progress-fill').style.width = `${(currentIndex / queue.length) * 100}%`;
   document.getElementById('q-category').textContent = q.category;
   document.getElementById('q-prompt').textContent = q.prompt;
@@ -793,14 +743,15 @@ function gradeRequest(q, answer) {
   return fetch('/api/grade', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ question_id: q.id, answer, model: selectedModel }),
+    body: JSON.stringify({ question_id: q.id, answer }),
   }).then(async res => {
     if (!res.ok) {
       const err = await res.json().catch(() => ({ detail: res.statusText }));
       throw new Error(err.detail || 'Grading failed');
     }
     const result = await res.json();
-    updateEstimateMs(selectedModel, result.meta?.duration_ms ?? (Date.now() - callStart));
+    updateEstimateMs(result.meta?.duration_ms ?? (Date.now() - callStart));
+    if (result.meta?.model) gradingModelUsed = result.meta.model;
     return result;
   });
 }
@@ -811,7 +762,7 @@ async function submitLive(idx, q, answer) {
   const answerBox = document.getElementById('answer-box');
   const gradingBox = document.getElementById('grading-box');
   gradingBox.classList.remove('hidden');
-  const estimateMs = getEstimateMs(selectedModel);
+  const estimateMs = getEstimateMs();
   startGradingAnimation(estimateMs);
 
   try {
@@ -944,7 +895,7 @@ async function saveAttemptIfSignedIn(avg, scoredCount) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         length: queue.length,
-        model: selectedModel,
+        model: gradingModelUsed || 'unknown',
         grading_mode: gradingMode,
         avg_score: scoredCount ? avg : null,
         questions: results.filter(Boolean).map(r => ({
