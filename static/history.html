@@ -150,6 +150,7 @@
   <div class="brand">
     <img class="brand-mark" src="/favicon.svg" alt="">
     <div class="brand-name">Your interview history</div>
+    <button class="secondary hidden" id="logout-btn" type="button" style="margin-left:auto; padding:7px 14px; border:1px solid var(--border); border-radius:9px; background:transparent; color:var(--text-dim); cursor:pointer;">Log out</button>
     <button class="theme-toggle" id="theme-toggle" title="Toggle light / dark">🌙</button>
   </div>
 
@@ -255,6 +256,13 @@
       gateSignin.classList.remove('hidden');
       return;
     }
+
+    const logoutBtn = document.getElementById('logout-btn');
+    logoutBtn.classList.remove('hidden');
+    logoutBtn.onclick = async () => {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      window.location.href = '/index.html';
+    };
 
     const res = await fetch('/api/attempts');
     if (!res.ok) {

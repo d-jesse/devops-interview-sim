@@ -157,6 +157,7 @@
     <img class="brand-mark" src="/favicon.svg" alt="">
     <div class="brand-name">Master Cheatsheet</div>
     <span class="admin-badge">admin only</span>
+    <button class="secondary hidden" id="logout-btn" type="button" style="margin-left:auto; padding:7px 14px; border:1px solid var(--border); border-radius:9px; background:transparent; color:var(--text-dim); cursor:pointer;">Log out</button>
     <button class="theme-toggle" id="theme-toggle" title="Toggle light / dark">🌙</button>
   </div>
 
@@ -233,6 +234,12 @@
     }
     if (!me.user.is_admin) {
       gateMessage.textContent = `Signed in as ${me.user.email}, but this account isn't an admin.`;
+      const logoutBtn = document.getElementById('logout-btn');
+      logoutBtn.classList.remove('hidden');
+      logoutBtn.onclick = async () => {
+        await fetch('/api/auth/logout', { method: 'POST' });
+        window.location.href = '/index.html';
+      };
       return;
     }
 
@@ -245,6 +252,13 @@
     gate.classList.add('hidden');
     document.getElementById('cheatsheet').classList.remove('hidden');
     renderCategories('');
+
+    const logoutBtn = document.getElementById('logout-btn');
+    logoutBtn.classList.remove('hidden');
+    logoutBtn.onclick = async () => {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      window.location.href = '/index.html';
+    };
 
     document.getElementById('search-box').oninput = (e) => renderCategories(e.target.value);
   }
