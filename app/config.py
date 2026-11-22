@@ -6,7 +6,13 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
-    ollama_base_url: str = "http://100.x.x.x:11434"  # Mac Studio's Tailscale IP, not its LAN IP
+    # No hardcoded defaults for these three: a missing .env should fail
+    # loudly at startup, not silently fall back to a well-known admin
+    # password or someone else's Tailscale address on a public deployment.
+    ollama_base_url: str
+    admin_email: str
+    admin_password: str
+
     grading_model: str = "qwen3.6:35b"
     question_bank_path: Path = Path(__file__).resolve().parent.parent / "data" / "question_bank.json"
 
@@ -14,9 +20,6 @@ class Settings(BaseSettings):
 
     session_cookie_name: str = "dis_session"
     session_ttl_days: int = 30
-
-    admin_email: str = "admin@admin"
-    admin_password: str = "changeme123"
 
     google_client_id: str = ""
     google_client_secret: str = ""

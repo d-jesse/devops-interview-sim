@@ -1,3 +1,4 @@
+import logging
 import secrets
 from pathlib import Path
 
@@ -23,6 +24,8 @@ from app.grading import grade_answer
 from app.question_bank import find_question, full_bank, public_categories
 from app.users import create_user, get_user_by_email, get_user_by_google_sub, link_google_account, seed_admin
 
+logger = logging.getLogger("devops-interview-sim")
+
 app = FastAPI(title="devops-interview-sim")
 
 STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
@@ -43,6 +46,21 @@ async def on_startup() -> None:
 @app.get("/api/healthz")
 async def healthz() -> dict:
     return {"status": "ok"}
+
+
+@app.get("/api/healthz/grading")
+async def healthz_grading() -> JSONResponse:
+    """Separate from /api/healthz on purpose: this one depends on the Mac
+    Studio over Tailscale, so it can go down independently of the app
+    itself. Point a second uptime check at this to tell the two apart."""
+    try:
+        async with httpx.AsyncClient(base_url=settings.ollama_base_url, timeout=5) as client:
+            resp = await client.get("/v1/models")
+            resp.raise_for_status()
+        return JSONResponse({"status": "ok"})
+    except Exception as exc:
+        logger.warning("Grading backend unreachable: %s", exc)
+        return JSONResponse({"status": "unreachable"}, status_code=503)
 
 
 @app.get("/api/categories")
@@ -66,7 +84,11 @@ async def grade(req: GradeRequest) -> dict:
     try:
         result = await grade_answer(question, req.answer)
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"Grading failed: {exc}") from exc
+        logger.error("Grading failed for question_id=%s: %s", req.question_id, exc)
+        raise HTTPException(
+            status_code=502,
+            detail="The grading model is temporarily unavailable. Please try again in a moment.",
+        ) from exc
 
     return result
 
