@@ -1,0 +1,23 @@
+[Unit]
+Description=devops-interview-sim
+After=network-online.target tailscaled.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=deploy
+Group=deploy
+WorkingDirectory=/opt/devops-interview-sim
+EnvironmentFile=/opt/devops-interview-sim/.env
+ExecStart=/opt/devops-interview-sim/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8010
+Restart=always
+RestartSec=3
+
+# Light sandboxing — the app only needs its own directory and the network.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths=/opt/devops-interview-sim/data
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,7 @@
+# Replace with your real domain. Caddy handles Let's Encrypt
+# certificate issuance and renewal automatically — no other config
+# needed for HTTPS.
+yourdomain.com {
+	reverse_proxy 127.0.0.1:8010
+	encode gzip
+}
