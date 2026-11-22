@@ -5,3 +5,8 @@ __pycache__/
 *.log
 .DS_Store
 data/app.db
+
+# The question bank contains every rubric and model answer — it's the
+# whole point of keeping grading server-side. Deployed to the server
+# directly, never committed.
+data/question_bank.json
