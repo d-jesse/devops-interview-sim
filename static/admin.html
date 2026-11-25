@@ -238,7 +238,7 @@
       logoutBtn.classList.remove('hidden');
       logoutBtn.onclick = async () => {
         await fetch('/api/auth/logout', { method: 'POST' });
-        window.location.href = '/index.html';
+        window.location.href = '/';
       };
       return;
     }
@@ -257,7 +257,7 @@
     logoutBtn.classList.remove('hidden');
     logoutBtn.onclick = async () => {
       await fetch('/api/auth/logout', { method: 'POST' });
-      window.location.href = '/index.html';
+      window.location.href = '/';
     };
 
     document.getElementById('search-box').oninput = (e) => renderCategories(e.target.value);
