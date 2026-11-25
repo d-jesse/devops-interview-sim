@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /history
+Disallow: /api/
+
+Sitemap: https://devopsinterviewsim.com/sitemap.xml
