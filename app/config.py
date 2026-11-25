@@ -20,6 +20,9 @@ class Settings(BaseSettings):
 
     session_cookie_name: str = "dis_session"
     session_ttl_days: int = 30
+    # True in production (HTTPS). Set to false in local dev's .env, since
+    # a Secure cookie is never sent back over plain http://localhost.
+    session_cookie_secure: bool = True
 
     google_client_id: str = ""
     google_client_secret: str = ""

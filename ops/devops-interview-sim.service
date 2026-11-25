@@ -9,7 +9,7 @@ User=deploy
 Group=deploy
 WorkingDirectory=/opt/devops-interview-sim
 EnvironmentFile=/opt/devops-interview-sim/.env
-ExecStart=/opt/devops-interview-sim/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8010
+ExecStart=/opt/devops-interview-sim/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8010 --proxy-headers --forwarded-allow-ips=127.0.0.1
 Restart=always
 RestartSec=3
 

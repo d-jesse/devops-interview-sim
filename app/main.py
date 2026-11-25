@@ -7,6 +7,9 @@ from fastapi import Depends, FastAPI, HTTPException, Request, Response
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.util import get_remote_address
 
 from app.attempts import list_attempts, save_attempt
 from app.auth import (
@@ -26,7 +29,17 @@ from app.users import create_user, get_user_by_email, get_user_by_google_sub, li
 
 logger = logging.getLogger("devops-interview-sim")
 
+# Keyed by request.client.host, which is only the real visitor IP because
+# uvicorn is run with --proxy-headers --forwarded-allow-ips=127.0.0.1 and
+# Caddy (the only thing that can reach uvicorn at all) sets X-Forwarded-For
+# correctly. Without that, every request would look like it came from
+# Caddy itself and this limit would apply globally across all visitors
+# combined rather than per visitor.
+limiter = Limiter(key_func=get_remote_address)
+
 app = FastAPI(title="devops-interview-sim")
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
 
@@ -74,7 +87,8 @@ class GradeRequest(BaseModel):
 
 
 @app.post("/api/grade")
-async def grade(req: GradeRequest) -> dict:
+@limiter.limit("20/minute")
+async def grade(request: Request, req: GradeRequest) -> dict:
     question = find_question(req.question_id)
     if question is None:
         raise HTTPException(status_code=404, detail="Unknown question_id")
@@ -110,6 +124,7 @@ def _set_session_cookie(response, token: str) -> None:
         token,
         httponly=True,
         samesite="lax",
+        secure=settings.session_cookie_secure,
         max_age=settings.session_ttl_days * 86400,
         path="/",
     )
@@ -133,7 +148,8 @@ class RegisterRequest(BaseModel):
 
 
 @app.post("/api/auth/register")
-async def register(req: RegisterRequest) -> JSONResponse:
+@limiter.limit("10/minute")
+async def register(request: Request, req: RegisterRequest) -> JSONResponse:
     email = req.email.strip().lower()
     if not email or "@" not in email:
         raise HTTPException(status_code=400, detail="Enter a valid email")
@@ -155,7 +171,8 @@ class LoginRequest(BaseModel):
 
 
 @app.post("/api/auth/login")
-async def login(req: LoginRequest) -> JSONResponse:
+@limiter.limit("5/minute")
+async def login(request: Request, req: LoginRequest) -> JSONResponse:
     user = get_user_by_email(req.email.strip().lower())
     if not user or not user["password_hash"] or not verify_password(req.password, user["password_hash"]):
         raise HTTPException(status_code=401, detail="Wrong email or password")
@@ -198,8 +215,14 @@ async def google_login(next: str | None = None) -> RedirectResponse:
     }
     url = f"{GOOGLE_AUTHORIZE_URL}?{httpx.QueryParams(params)}"
     out = RedirectResponse(url)
-    out.set_cookie(OAUTH_STATE_COOKIE, state, httponly=True, samesite="lax", max_age=600, path="/")
-    out.set_cookie(OAUTH_NEXT_COOKIE, _safe_next_path(next), httponly=True, samesite="lax", max_age=600, path="/")
+    out.set_cookie(
+        OAUTH_STATE_COOKIE, state, httponly=True, samesite="lax",
+        secure=settings.session_cookie_secure, max_age=600, path="/",
+    )
+    out.set_cookie(
+        OAUTH_NEXT_COOKIE, _safe_next_path(next), httponly=True, samesite="lax",
+        secure=settings.session_cookie_secure, max_age=600, path="/",
+    )
     return out
 
 
