@@ -172,6 +172,46 @@
     border-color: transparent;
     color: white;
   }
+  .field-label-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .field-label-row .field-label { margin-bottom: 0; }
+  .category-quick-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+  .category-quick-actions button {
+    background: none;
+    border: none;
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+  }
+  .category-quick-actions button:hover { text-decoration: underline; }
+  .category-pill-row { margin-bottom: 8px; }
+  .category-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .category-pill .cat-count {
+    font-size: 11.5px;
+    font-weight: 600;
+    opacity: 0.7;
+  }
+  .category-warning {
+    font-size: 12.5px;
+    color: var(--bad);
+    margin: 0 0 20px;
+  }
   .start-btn {
     width: 100%;
     background: linear-gradient(135deg, var(--accent), var(--accent-2));
@@ -433,6 +473,17 @@
     <div class="field-label">How many questions?</div>
     <div class="pill-row" id="length-pills"></div>
 
+    <div class="field-label-row">
+      <div class="field-label">Which topics?</div>
+      <div class="category-quick-actions">
+        <button type="button" id="category-select-all">All</button>
+        <span>·</span>
+        <button type="button" id="category-select-none">None</button>
+      </div>
+    </div>
+    <div class="pill-row category-pill-row" id="category-toggles"></div>
+    <p class="category-warning hidden" id="category-warning">Pick at least one topic to start.</p>
+
     <div class="field-label">When should answers be graded?</div>
     <div class="pill-row" id="gradingmode-pills"></div>
 
@@ -509,8 +560,25 @@ const LENGTH_OPTIONS = [5, 10, 15, 21];
 const DEFAULT_ESTIMATE_MS = 15000;
 const ESTIMATE_KEY = 'dis_model_estimates_v1';
 
-let allQuestions = [];   // flattened {id, prompt, category}
+let allQuestions = [];   // flattened {id, prompt, category, categoryId}
+let allCategories = []; // [{id, name, count}]
+let enabledCategoryIds = new Set();
 let selectedLength = 10;
+
+const CATEGORY_ICONS = {
+  'linux-shell': '🐧',
+  'docker': '🐳',
+  'kubernetes': '☸️',
+  'cicd': '🔁',
+  'cloud': '☁️',
+  'terraform': '🏗️',
+  'monitoring': '📊',
+  'security': '🔒',
+  'scenarios': '🧩',
+  'leadership': '🧭',
+  'platform-eng': '🛠️',
+};
+const CATEGORY_SELECTION_KEY = 'dis_enabled_categories_v1';
 let gradingMode = 'live'; // 'live' | 'end'
 let gradingModelUsed = null; // learned from the server's grading response, never chosen by the user
 
@@ -607,15 +675,80 @@ async function init() {
   const categories = await (await fetch('/api/categories')).json();
 
   allQuestions = [];
+  allCategories = [];
   for (const cat of categories) {
     for (const q of cat.questions) {
-      allQuestions.push({ id: q.id, prompt: q.prompt, category: cat.name });
+      allQuestions.push({ id: q.id, prompt: q.prompt, category: cat.name, categoryId: cat.id });
     }
+    allCategories.push({ id: cat.id, name: cat.name, count: cat.questions.length });
   }
 
+  let savedSelection = null;
+  try { savedSelection = JSON.parse(localStorage.getItem(CATEGORY_SELECTION_KEY)); } catch {}
+  const validIds = new Set(allCategories.map(c => c.id));
+  if (Array.isArray(savedSelection) && savedSelection.some(id => validIds.has(id))) {
+    enabledCategoryIds = new Set(savedSelection.filter(id => validIds.has(id)));
+  } else {
+    enabledCategoryIds = new Set(allCategories.map(c => c.id));
+  }
+
+  renderCategoryToggles();
   renderLengthPills();
   renderGradingModePills();
 }
+
+function getFilteredQuestions() {
+  return allQuestions.filter(q => enabledCategoryIds.has(q.categoryId));
+}
+
+function saveCategorySelection() {
+  try { localStorage.setItem(CATEGORY_SELECTION_KEY, JSON.stringify([...enabledCategoryIds])); } catch {}
+}
+
+function renderCategoryToggles() {
+  const row = document.getElementById('category-toggles');
+  row.innerHTML = '';
+  for (const cat of allCategories) {
+    const pill = document.createElement('div');
+    pill.className = 'pill category-pill' + (enabledCategoryIds.has(cat.id) ? ' active' : '');
+    pill.innerHTML = `${CATEGORY_ICONS[cat.id] || '📁'} ${escapeHtml(cat.name)} <span class="cat-count">${cat.count}</span>`;
+    pill.onclick = () => {
+      if (enabledCategoryIds.has(cat.id)) {
+        enabledCategoryIds.delete(cat.id);
+      } else {
+        enabledCategoryIds.add(cat.id);
+      }
+      pill.classList.toggle('active');
+      saveCategorySelection();
+      renderLengthPills();
+      updateCategoryValidation();
+    };
+    row.appendChild(pill);
+  }
+  updateCategoryValidation();
+}
+
+function updateCategoryValidation() {
+  const warning = document.getElementById('category-warning');
+  const startBtn = document.getElementById('start-btn');
+  const empty = enabledCategoryIds.size === 0;
+  warning.classList.toggle('hidden', !empty);
+  startBtn.disabled = empty;
+}
+
+document.getElementById('category-select-all').onclick = () => {
+  enabledCategoryIds = new Set(allCategories.map(c => c.id));
+  saveCategorySelection();
+  renderCategoryToggles();
+  renderLengthPills();
+};
+
+document.getElementById('category-select-none').onclick = () => {
+  enabledCategoryIds = new Set();
+  saveCategorySelection();
+  renderCategoryToggles();
+  renderLengthPills();
+};
 
 function renderGradingModePills() {
   const row = document.getElementById('gradingmode-pills');
@@ -640,14 +773,19 @@ function renderGradingModePills() {
 function renderLengthPills() {
   const row = document.getElementById('length-pills');
   row.innerHTML = '';
-  const options = LENGTH_OPTIONS.filter(n => n <= allQuestions.length);
-  if (options[options.length - 1] !== allQuestions.length) options.push(allQuestions.length);
-  selectedLength = options.includes(10) ? 10 : options[0];
+  const poolSize = getFilteredQuestions().length;
+  if (poolSize === 0) {
+    row.innerHTML = '<p class="progress-label" style="margin:0;">No questions in the selected topics.</p>';
+    return;
+  }
+  const options = LENGTH_OPTIONS.filter(n => n <= poolSize);
+  if (options[options.length - 1] !== poolSize) options.push(poolSize);
+  selectedLength = options.includes(selectedLength) ? selectedLength : (options.includes(10) ? 10 : options[0]);
 
   for (const n of options) {
     const pill = document.createElement('div');
     pill.className = 'pill' + (n === selectedLength ? ' active' : '');
-    pill.textContent = n === allQuestions.length ? `All (${n})` : n;
+    pill.textContent = n === poolSize ? `All (${n})` : n;
     pill.onclick = () => {
       selectedLength = n;
       row.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
@@ -659,7 +797,7 @@ function renderLengthPills() {
 
 /* ---------- interview flow ---------- */
 function beginInterview() {
-  queue = shuffle(allQuestions).slice(0, selectedLength);
+  queue = shuffle(getFilteredQuestions()).slice(0, selectedLength);
   currentIndex = 0;
   results = new Array(queue.length).fill(null);
   pendingGrades = [];
