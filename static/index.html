@@ -253,8 +253,8 @@
     <img class="brand-mark" src="/favicon.svg" alt="">
     <div class="brand-name">DevOps Interview Sim</div>
     <div class="nav-actions">
-      <a class="nav-link" id="nav-admin" href="/admin.html" style="display:none;">Cheatsheet</a>
-      <a class="nav-link" id="nav-auth" href="/signin.html?next=/app.html">Sign in</a>
+      <a class="nav-link" id="nav-admin" href="/admin" style="display:none;">Cheatsheet</a>
+      <a class="nav-link" id="nav-auth" href="/signin?next=/app">Sign in</a>
       <button class="nav-link hidden" id="nav-logout" type="button" style="background:none; border:none; cursor:pointer;">Log out</button>
       <button class="theme-toggle" id="theme-toggle" title="Toggle light / dark">🌙</button>
     </div>
@@ -269,8 +269,8 @@
       tells you exactly what you nailed and what you missed.
     </p>
     <div class="hero-actions">
-      <a class="btn btn-primary" href="/app.html">Start a mock interview →</a>
-      <a class="btn btn-secondary" id="hero-signup" href="/signin.html?mode=register&next=/app.html">Create a free account</a>
+      <a class="btn btn-primary" href="/app">Start a mock interview →</a>
+      <a class="btn btn-secondary" id="hero-signup" href="/signin?mode=register&next=/app">Create a free account</a>
     </div>
   </div>
 
@@ -360,7 +360,7 @@
   <div class="cta-final">
     <h2>Ready to find your gaps?</h2>
     <p>No account required to try it — sign up only if you want it to stick around.</p>
-    <a class="btn btn-primary" href="/app.html">Start a mock interview →</a>
+    <a class="btn btn-primary" href="/app">Start a mock interview →</a>
   </div>
 
   <div class="footer">DevOps Interview Sim — graded by an AI agent, one honest mock interview at a time.</div>
@@ -385,7 +385,7 @@
       if (data.user) {
         const navAuth = document.getElementById('nav-auth');
         navAuth.textContent = data.user.name;
-        navAuth.href = '/history.html';
+        navAuth.href = '/history';
         document.getElementById('hero-signup').classList.add('hidden');
         if (data.user.is_admin) {
           document.getElementById('nav-admin').style.display = '';

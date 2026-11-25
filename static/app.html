@@ -572,15 +572,15 @@ function renderAuthBar() {
   if (currentUser) {
     bar.innerHTML = `
       <span class="user-chip">${escapeHtml(currentUser.name)}${currentUser.is_admin ? '<span class="admin-badge">admin</span>' : ''}</span>
-      <a class="secondary auth-link" href="/history.html" style="padding:7px 14px; border:1px solid var(--border); border-radius:9px;">History</a>
-      ${currentUser.is_admin ? '<a class="secondary auth-link" href="/admin.html" style="padding:7px 14px; border:1px solid var(--border); border-radius:9px;">Cheatsheet</a>' : ''}
+      <a class="secondary auth-link" href="/history" style="padding:7px 14px; border:1px solid var(--border); border-radius:9px;">History</a>
+      ${currentUser.is_admin ? '<a class="secondary auth-link" href="/admin" style="padding:7px 14px; border:1px solid var(--border); border-radius:9px;">Cheatsheet</a>' : ''}
       <button class="secondary auth-link" id="logout-btn" type="button">Log out</button>
     `;
     document.getElementById('logout-btn').onclick = doLogout;
   } else {
     bar.innerHTML = `
-      <a class="secondary auth-link" href="/signin.html?next=/app.html" style="padding:7px 14px; border:1px solid var(--border); border-radius:9px;">Sign in</a>
-      <a class="secondary auth-link" href="/signin.html?mode=register&next=/app.html" style="padding:7px 14px; border:1px solid var(--border); border-radius:9px;">Create account</a>
+      <a class="secondary auth-link" href="/signin?next=/app" style="padding:7px 14px; border:1px solid var(--border); border-radius:9px;">Sign in</a>
+      <a class="secondary auth-link" href="/signin?mode=register&next=/app" style="padding:7px 14px; border:1px solid var(--border); border-radius:9px;">Create account</a>
     `;
   }
 }
@@ -885,7 +885,7 @@ function renderFeedback(slot, result) {
 async function saveAttemptIfSignedIn(avg, scoredCount) {
   const note = document.getElementById('summary-save-note');
   if (!currentUser) {
-    note.innerHTML = `<a href="/signin.html?next=/app.html">Sign in</a> to save this result to your history.`;
+    note.innerHTML = `<a href="/signin?next=/app">Sign in</a> to save this result to your history.`;
     return;
   }
   note.textContent = 'Saving to your history…';

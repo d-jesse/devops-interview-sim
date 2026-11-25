@@ -4,7 +4,7 @@ from pathlib import Path
 
 import httpx
 from fastapi import Depends, FastAPI, HTTPException, Request, Response
-from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from slowapi import Limiter, _rate_limit_exceeded_handler
@@ -196,7 +196,7 @@ async def logout(request: Request) -> Response:
 def _safe_next_path(next_path: str | None) -> str:
     if next_path and next_path.startswith("/") and not next_path.startswith("//"):
         return next_path
-    return "/app.html"
+    return "/app"
 
 
 @app.get("/api/auth/google/login")
@@ -315,6 +315,54 @@ async def get_attempts(user: dict = Depends(require_user)) -> list[dict]:
 @app.get("/api/admin/cheatsheet")
 async def admin_cheatsheet(admin: dict = Depends(require_admin)) -> list[dict]:
     return full_bank()
+
+
+# ---------- clean page paths (no .html in the browser) ----------
+
+
+def _redirect_with_query(request: Request, new_path: str) -> RedirectResponse:
+    query = f"?{request.url.query}" if request.url.query else ""
+    return RedirectResponse(f"{new_path}{query}", status_code=301)
+
+
+@app.get("/app", include_in_schema=False)
+async def serve_app_page() -> FileResponse:
+    return FileResponse(STATIC_DIR / "app.html")
+
+
+@app.get("/app.html", include_in_schema=False)
+async def redirect_app_html(request: Request) -> RedirectResponse:
+    return _redirect_with_query(request, "/app")
+
+
+@app.get("/history", include_in_schema=False)
+async def serve_history_page() -> FileResponse:
+    return FileResponse(STATIC_DIR / "history.html")
+
+
+@app.get("/history.html", include_in_schema=False)
+async def redirect_history_html(request: Request) -> RedirectResponse:
+    return _redirect_with_query(request, "/history")
+
+
+@app.get("/admin", include_in_schema=False)
+async def serve_admin_page() -> FileResponse:
+    return FileResponse(STATIC_DIR / "admin.html")
+
+
+@app.get("/admin.html", include_in_schema=False)
+async def redirect_admin_html(request: Request) -> RedirectResponse:
+    return _redirect_with_query(request, "/admin")
+
+
+@app.get("/signin", include_in_schema=False)
+async def serve_signin_page() -> FileResponse:
+    return FileResponse(STATIC_DIR / "signin.html")
+
+
+@app.get("/signin.html", include_in_schema=False)
+async def redirect_signin_html(request: Request) -> RedirectResponse:
+    return _redirect_with_query(request, "/signin")
 
 
 app.mount("/", StaticFiles(directory=STATIC_DIR, html=True), name="static")
